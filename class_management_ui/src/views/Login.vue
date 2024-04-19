@@ -40,7 +40,6 @@
                                         <a @click.prevent="loginn" class="btn btn-primary btn-user btn-block">
                                             Login
                                         </a>
-                                        <hr>
                                     </form>
                                     <hr>
                                     <div class="text-center">
@@ -82,7 +81,7 @@ export default {
                 password: '',
                 userRole: ''
             },
-            error: '',
+            errorLogin: '',
             changePassword: false,
             forgotPasswrod: false,
             sessionExpired: false

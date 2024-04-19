@@ -1,79 +1,20 @@
 <template>
   <div class="container-fluid">
-    <h1 class="display1 h3 mb-2 text-gray-800">Manage Classrooms</h1>
-
-    <div v-if="isLoading" class="d-flex justify-content-center align-items-center">
-      <div v-if="isLoading" class="spinner-border" role="status">
-        <span v-if="isLoading" class="visually-hidden">Loading...</span>
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Manage Classrooms</h6>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col-12">
-        <!-- <div>
-          <button id="toggle" class="btn btn-outline-secondary" @click="toggleShowFilter">
-            <i class="mdi mdi-format-vertical-align-center"></i>
-            {{ showFilter ? 'Hide' : 'Search' }}</button>
-          <div class="search-form collapse" id="filter">
-            <form class="form-control">
-              <div class="container-fluid">
-                <div class="row">
-                  <div class="col-lg-3">
-                    <label>ID</label>
-                    <input type="text" class="form-control search" placeholder="id" v-model="searchId"
-                      @input="this.isfirstSearchWithCriteria = true">
-                  </div>
-                  <div class="col-lg-3">
-                    <label>Name</label>
-                    <input type="text" class="form-control search" placeholder="name" v-model="searchName"
-                      @input="this.isfirstSearchWithCriteria = true">
-                  </div>
-                  <div class="col-lg-3">
-                    <label>Phone</label>
-                    <input type="text" class="form-control search" placeholder="phone" v-model="searchPhone"
-                      @input="this.isfirstSearchWithCriteria = true">
-                  </div>
-                  <div class="col-lg-3">
-                    <label>Email</label>
-                    <input type="text" class="form-control search" placeholder="email" v-model="searchEmail"
-                      @input="this.isfirstSearchWithCriteria = true">
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-lg-3">
-                    <label>Address</label>
-                    <input type="text" class="form-control search" placeholder="address" v-model="searchAddress"
-                      @input="this.isfirstSearchWithCriteria = true">
-                  </div>
-                  <div class="col-lg-3">
-                    <label>Created Date</label>
-                    <input type="date" class="form-control search" placeholder="date" v-model="searchCreatedDate"
-                      @input="this.isfirstSearchWithCriteria = true">
-                  </div>
-                  <div class="col-lg-1" style="margin-top: 12px;">
-                    <button type="" class="btn btn-info" @click.prevent="searchBy">Search</button>
-                  </div>
-                  <div class="col-lg-1">
-                    <button type="reset" style="margin-top: 12px;" class="btn btn-success" @click="reset">Reset</button>
-                  </div>
-                </div>
-              </div>
-
-            </form>
-          </div>
-        </div> -->
-        <div class='reportTable tab-pane active' id='activeCampaign'>
+      <div class="card-body">
+        <div class="table-responsive">
           <data-table :config="tableConfig"></data-table>
         </div>
-        
       </div>
-
     </div>
   </div>
 </template>
 <script>
-import DataTable from '@/common/DataTable.vue';
+import DataTable from '@/common/DataTable.vue'
+import { test } from '../utils/all-class-room-api'
 export default {
   name: 'all-classroom',
   components: {
@@ -94,38 +35,34 @@ export default {
     initTable() {
       this.tableConfig = {
         id: 'classroomTable',
-        dataTable: {
-          order: [[0, 'desc']],
+        datatable: {
+          orderData: [[0, 'desc']],
           searching: false,
           lengthChange: !1,
-          pageLength: 15,
-          select: !0,
+          pageLength: 5,
+          select: 0,
           scrollX: true,
-          columns: [
-            { title: 'ID', field: 'id' },
-            { title: 'Name', field: 'name' },
-            { title: 'Phone', field: 'phone' },
-            { title: 'Email', field: 'email' },
-            { title: 'Address', field: 'address' },
-            { title: 'Created Date', field: 'createdDate' }
-          ],
-          sAjaxSource: '',
+          scrollY: true,
+          scrollY: 200,
           bServerSide: true,
           bProcessing: true,
-          language: {
-            processing: '<div class="spinner-grow spinner-grow-lg text-primary" aria-hidden="false" aria-label="Loading" role="status"/>'
-          },
-          fnServerData: this.mockData,
-          drawCallback: this.initTooltip,
+          aoColumns: [
+            { sTitle: 'ID', mData: 'id' },
+            { sTitle: 'Name', mData: 'name' },
+            { sTitle: 'Phone', mData: 'phone' },
+            { sTitle: 'Email', mData: 'email' },
+            { sTitle: 'Address', mData: 'address' },
+            { sTitle: 'Created Date', mData: 'createdDate' }
+          ],
+          fnServerData: this.mockData
         }
-      },
-      this.$forceUpdate()
+      }
     },
     mockData(sSource, aoData, fnCallback) {
-      let data = [];
-      data.push
+      let dataContent = [];
+      let data = {}
       for (let i = 0; i < 10; i++) {
-        data.push({
+        dataContent.push({
           id: i + 1,
           name: `Classroom ${i + 1}`,
           phone: `123-456-${i}`,
@@ -134,6 +71,9 @@ export default {
           createdDate: new Date().toISOString().split('T')[0]
         });
       }
+      data.recordsTotal = 10
+      data.recordsFiltered = 5
+      data.data = dataContent
       fnCallback(data)
     }
   },
