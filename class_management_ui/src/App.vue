@@ -1,47 +1,38 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <div v-if="currentRouteName == 'Login'">
+    <login></login>
+  </div>
+  <div id="wrapper" v-else>
+    <nav-bar></nav-bar>
+    <div id="content-wrapper">
+      <top-bar></top-bar>
+      <RouterView></RouterView>
+      <footer-bar></footer-bar>
     </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+<script>
+import { login } from './utils/login-api';
+import Login from './views/Login.vue';
+import NavBar from './components/NavBar.vue';
+import TopBar from './components/TopBar.vue';
+import FooterBar from './components/FooterBar.vue';
+
+export default {
+  name: 'app',
+  components: {
+    Login,
+    NavBar,
+    TopBar,
+    FooterBar
+  },
+  computed: {
+    currentRouteName() {
+      return this.$route.name
+    }
+  },
 }
+</script>
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
+<style scoped></style>
