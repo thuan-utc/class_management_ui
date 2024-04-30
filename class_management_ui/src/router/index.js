@@ -1,24 +1,50 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getAccessToken, isLoggedIn } from '@/utils/auth-api';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '',
+      redirect: '/dashboard'
+    },
+    {
+      path: '/login',
       name: 'Login',
       component: () => import('../views/Login.vue')
     },
     {
+      path: '/forgot-password',
+      name: 'ForgotPassword',
+      component: () => import('../views/ForgotPassword.vue')
+    },
+    {
       path: '/dashboard',
       name: 'DashBoard',
-      component: () => import('../components/Dashboard.vue')
+      component: () => import('../components/Dashboard.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/all-classroom',
       name: 'AllClassroom',
-      component: () => import('../components/AllClassroom.vue')
+      component: () => import('../components/AllClassroom.vue'),
+      meta: { requiresAuth: true }
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!isLoggedIn()) {
+      // Redirect to login page if not logged in
+      next('/login');
+    } else {
+      // Proceed to the requested route if logged in
+      next();
+    }
+  } else {
+    next(); // Proceed to the requested route if it does not require authentication
+  }
+});
 
 export default router

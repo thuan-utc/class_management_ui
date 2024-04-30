@@ -2,10 +2,13 @@
   <div v-if="currentRouteName == 'Login'">
     <login></login>
   </div>
+  <div v-else-if="currentRouteName == 'ForgotPassword'">
+    <ForgotPassword></ForgotPassword>
+  </div>
   <div id="wrapper" v-else>
     <nav-bar></nav-bar>
-    <div id="content-wrapper">
-      <div class="content">
+    <div id="content-wrapper" class="d-flex flex-column">
+      <div id="content">
         <top-bar></top-bar>
         <RouterView></RouterView>
       </div>
@@ -15,8 +18,7 @@
 </template>
 
 <script>
-import { login } from './utils/login-api';
-import Login from './views/Login.vue';
+import Login from './views/Login.vue'
 import NavBar from './components/NavBar.vue';
 import TopBar from './components/TopBar.vue';
 import FooterBar from './components/FooterBar.vue';
@@ -28,6 +30,7 @@ import './assets/js/sb-admin-2.js'
 import './assets/vendor/datatables/jquery.dataTables.js'
 import './assets/vendor/datatables/jquery.dataTables.min.js'
 import './assets/vendor/datatables/dataTables.bootstrap4.min.js'
+import ForgotPassword from './views/ForgotPassword.vue';
 
 export default {
   name: 'app',
@@ -35,7 +38,8 @@ export default {
     Login,
     NavBar,
     TopBar,
-    FooterBar
+    FooterBar,
+    ForgotPassword
   },
   computed: {
     currentRouteName() {
@@ -45,4 +49,6 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+/* @import './assets/datatables/datatables.min.css'; */
+</style>

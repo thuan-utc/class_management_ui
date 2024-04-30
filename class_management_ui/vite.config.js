@@ -12,5 +12,10 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  define: {
+    'process.env': {
+      VITE_API_BASE_URL: JSON.stringify('http://localhost:8081/api')
+    }
   }
 })

@@ -16,17 +16,4 @@ export default {
 </script>
 
 <style scoped>
-
-.sticky-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: white;
-    text-align: center;
-    padding: 2rem 0;
-    border-top: 1px solid #ddd;
-    margin-left: auto;
-    margin-right: auto;
-    margin: 10000 auto;
-} 
 </style>

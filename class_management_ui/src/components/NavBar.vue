@@ -109,6 +109,24 @@
 
         <hr class="sidebar-divider d-none d-md-block">
 
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Quản lý tài liệu
+        </div>
+
+        <div class="nav-item">
+            <!-- data-toggle="collapse" -->
+            <a class="nav-link collapsed" href="#" data-target="#collapseSetting" aria-expanded="true"
+                aria-controls="collapseSetting">
+                <i class="fas fa-fw fa-book"></i>
+                <router-link to="/setting" style="color: white;"><span>Tài liệu</span></router-link>
+            </a>
+        </div>
+
+
+        <hr class="sidebar-divider d-none d-md-block">
+
         <div class="nav-item">
             <!-- data-toggle="collapse" -->
             <a class="nav-link collapsed" href="#" data-target="#collapseSetting" aria-expanded="true"
