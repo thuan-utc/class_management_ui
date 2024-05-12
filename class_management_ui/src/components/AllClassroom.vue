@@ -6,7 +6,7 @@
         <!-- Card Header - Accordion -->
         <a href="#searchCriteriaCard" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button"
           aria-expanded="false" aria-controls="searchCriteriaCard">
-          <h6 class="m-0 font-weight-bold text-primary">Quản lý lớp học</h6>
+          <h5 class="m-0 font-weight-bold text-primary">Quản lý lớp học</h5>
         </a>
         <!-- Card Content - Collapse -->
         <div class="collapse" id="searchCriteriaCard" style="">
@@ -120,7 +120,7 @@
 
         </div>
         <div class="card-body">
-          <div class="row"><data-table :config="tableConfig"></data-table></div>
+          <div class="row"><data-table :config="selectedClass.studentTableConfig"></data-table></div>
         </div>
       </div>
 
@@ -129,7 +129,7 @@
           <h6 class="m-0 font-weight-bold text-primary">Lịch học</h6>
         </div>
         <div class="card-body">
-         
+
         </div>
       </div>
 
@@ -259,7 +259,7 @@
                 </div>
               </div>
 
-              <p>*Thêm danhh sách học viên và lịch học ở chi tiết lớp học sau khi khởi tạo thông tin cơ bản.</p>         
+              <p>*Thêm danhh sách học viên và lịch học ở chi tiết lớp học sau khi khởi tạo thông tin cơ bản.</p>
             </form>
           </div>
           <div class="modal-footer">
@@ -328,6 +328,7 @@
 import DataTable from '@/common/DataTable.vue'
 import { createNewClass, search, getClassDetail, uploadListStudent } from '../utils/all-class-room-api'
 import { downloadSample } from '../utils/file-api.js'
+import { getAllStudent } from '../utils/student-api'
 import moment from 'moment'
 import Notification from '@/common/Notification.vue'
 export default {
@@ -360,7 +361,7 @@ export default {
         subjectName: '',
         note: '',
         createdDate: null,
-        listStudent: '',
+        studentTableConfig: '',
         listSchedule: '',
         listDocument: ''
       },
@@ -510,6 +511,7 @@ export default {
       getClassDetail(currentRow.id).then((response) => {
         this.selectedClass = response
         this.isPageList = false
+        this.inititClassDetail()
 
       }).catch((error) => {
         console.log("Error fecth class detail " + error)
@@ -561,6 +563,63 @@ export default {
       const fileInput = event.target;
       const selectedFile = fileInput.files[0];
       this.filePicked = selectedFile ? selectedFile.name : 'Chưa có file nào được chọn';
+    },
+    inititClassDetail() {
+      this.selectedClass.studentTableConfig = {
+        id: 'studentTable',
+        // events: [
+        //   {
+        //     event: 'click',
+        //     selector: '.btn-class-detail',
+        //     handler: this.showClassDetail
+        //   }
+        // ],
+        datatable: {
+          order: [[5, 'desc']],
+          searching: false,
+          lengthChange: !1,
+          pageLength: 10,
+          paging: false,
+          select: 0,
+          scrollX: true,
+          scrollY: '200px',
+          bServerSide: true,
+          bProcessing: false,
+          sAjaxSource: '',
+          language: {
+            processing: '<div class="spinner-grow spinner-grow-lg text-primary" aria-hidden="false" aria-label="Loading" role="status"/>'
+          },
+          aoColumns: [
+            { sTitle: 'Id',mData: 'id', bVisible: true },
+            { sTitle: 'Họ', mData: 'firstName' },
+            { sTitle: 'Tên đệm', mData: 'surname' },
+            { sTitle: 'Tên', mData: 'lastName' },
+            { sTitle: 'Email', mData: 'email' },
+            {
+              sTitle: 'Ngày đăng kí', mData: 'createdDate',
+              mRender: function (data, type, full) {
+                return data !== null ? moment(data).format('YYYY/MM/DD hh:mm:ss') : ''
+              }
+            }
+          ],
+          fnServerData: this.getAllStudent
+        }
+      }
+    },
+    getAllStudent(sSource, aoData, fnCallback) {
+      getAllStudent(this.selectedClass.id).then((response) => {
+        let data = {}
+        data.recordsTotal = response.totalElements
+        data.recordsFiltered = response.totalElements
+        data.data = response.content
+        fnCallback(data)
+      }).catch((error) => {
+        console.log(error)
+        alert({
+          title: 'Error',
+          content: error.message
+        })
+      })
     }
   },
   mounted() {

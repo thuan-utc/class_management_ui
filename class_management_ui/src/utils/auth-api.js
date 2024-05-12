@@ -3,6 +3,7 @@ import Router from "../router"
 import { jwtDecode } from "jwt-decode"
 
 const ACCESS_TOKEN_KEY = 'accessToken'
+const USER_NAME = 'username'
 const AUTH_URL = `${import.meta.env.VITE_API_BASE_URL}/auth`
 
 export {
@@ -12,6 +13,7 @@ export {
 async function login(credential) {
   return await axios.post(`${AUTH_URL}/login`, credential).then((response) => {
     localStorage.setItem(ACCESS_TOKEN_KEY, response.data[ACCESS_TOKEN_KEY])
+    localStorage.setItem(USER_NAME, credential.username)
     Router.push("/dashboard")
   })
 }

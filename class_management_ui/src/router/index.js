@@ -36,6 +36,30 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/setting',
+      name: 'Setting',
+      component: () => import('../components/Setting.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/class-document',
+      name: 'ClassDocument',
+      component: () => import('../components/ClassDocument.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/tutor-fee',
+      name: 'TutorFee',
+      component: () => import('../components/TutorFee.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/all-student',
+      name: 'AllStudent',
+      component: () => import('../components/AllStudent.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/:catchAll(.*)',
       name: 'NotFound',
       component: () => import('../components/BlankPage.vue')

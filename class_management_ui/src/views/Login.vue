@@ -16,7 +16,7 @@
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Class Managment System!</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Hệ thống quản lý lớp học</h1>
                                     </div>
                                     <form class="user">
                                         <div class="form-group">
