@@ -14,6 +14,11 @@ const router = createRouter({
       component: () => import('../views/Login.vue')
     },
     {
+      path: '/new-account',
+      name: 'NewAccount',
+      component: () => import('../views/NewAccount.vue')
+    },
+    {
       path: '/forgot-password',
       name: 'ForgotPassword',
       component: () => import('../views/ForgotPassword.vue')
@@ -29,6 +34,11 @@ const router = createRouter({
       name: 'AllClassroom',
       component: () => import('../components/AllClassroom.vue'),
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'NotFound',
+      component: () => import('../components/BlankPage.vue')
     }
   ]
 })

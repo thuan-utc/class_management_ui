@@ -40,7 +40,7 @@
                                         <a class="small" href="#" @click="redirectToForgotPassword">Forgot Password?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" @click="this.$router.push({ path: `/signup`})">Create an
+                                        <a class="small" @click="this.$router.push({ path: `/new-account`})">Create an
                                             Account!</a>
                                     </div>
                                 </div>

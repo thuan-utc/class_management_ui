@@ -33,7 +33,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                 aria-expanded="true" aria-controls="collapseTwo">
-                <i class="fas fa-fw fa-chalkboard"></i> 
+                <i class="fas fa-fw fa-chalkboard"></i>
                 <!-- fa-fw -> fix width -->
                 <span>Quản lý lớp học</span>
                 <!-- <router-link to="/all-classrooms" style="color: white;"><span>Lớp học</span></router-link> -->
@@ -41,9 +41,11 @@
             <div id="collapseTwo" class="collapse" aria-labelledby="collapseTwo" data-parent="#accordionSidebar">
                 <div class="bg-white py-2 collapse-inner rounded">
                     <a class="collapse-item" href="#"><router-link to="/all-classroom" style="color: black;">
-                        <span>Tất cả lớp học</span></router-link></a>
+                            <span>Tất cả lớp học</span></router-link></a>
                     <a class="collapse-item" href="#"><router-link to="/classroom-schedule" style="color: black;">
-                        <span>Lịch học</span></router-link></a>
+                            <span>Lịch dạy</span></router-link></a>
+                    <a class="collapse-item" href="#"><router-link to="/classroom-schedule" style="color: black;">
+                            <span>Lớp học trong ngày</span></router-link></a>
                 </div>
             </div>
         </li>

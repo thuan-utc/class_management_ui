@@ -6,7 +6,7 @@ const ACCESS_TOKEN_KEY = 'accessToken'
 const AUTH_URL = `${import.meta.env.VITE_API_BASE_URL}/auth`
 
 export {
-  login, signup, logout, sendMailResetPassword, resetPassword
+  login, signup, logout, sendMailResetPassword, resetPassword, verifyCode
 };
 
 async function login(credential) {
@@ -17,7 +17,12 @@ async function login(credential) {
 }
 
 async function signup(newUser) {
-  const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, credential);
+  const response = await axios.post(`${AUTH_URL}/signup`, newUser);
+  return response;
+}
+
+async function verifyCode(user) {
+  const response = await axios.put(`${AUTH_URL}/active-account`, user);
   return response;
 }
 

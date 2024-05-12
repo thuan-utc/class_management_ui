@@ -5,6 +5,9 @@
   <div v-else-if="currentRouteName == 'ForgotPassword'">
     <ForgotPassword></ForgotPassword>
   </div>
+  <div v-else-if="currentRouteName == 'NewAccount'">
+    <NewAccount></NewAccount>
+  </div>
   <div id="wrapper" v-else>
     <nav-bar></nav-bar>
     <div id="content-wrapper" class="d-flex flex-column">
@@ -19,9 +22,9 @@
 
 <script>
 import Login from './views/Login.vue'
-import NavBar from './components/NavBar.vue';
-import TopBar from './components/TopBar.vue';
-import FooterBar from './components/FooterBar.vue';
+import NavBar from './components/NavBar.vue'
+import TopBar from './components/TopBar.vue'
+import FooterBar from './components/FooterBar.vue'
 import './assets/vendor/jquery/jquery.min.js'
 import './assets/vendor/bootstrap/js/bootstrap.bundle.min.js'
 import './assets/vendor/jquery-easing/jquery.easing.min.js'
@@ -30,7 +33,8 @@ import './assets/js/sb-admin-2.js'
 import './assets/vendor/datatables/jquery.dataTables.js'
 import './assets/vendor/datatables/jquery.dataTables.min.js'
 import './assets/vendor/datatables/dataTables.bootstrap4.min.js'
-import ForgotPassword from './views/ForgotPassword.vue';
+import ForgotPassword from './views/ForgotPassword.vue'
+import NewAccount from './views/NewAccount.vue'
 
 export default {
   name: 'app',
@@ -39,7 +43,8 @@ export default {
     NavBar,
     TopBar,
     FooterBar,
-    ForgotPassword
+    ForgotPassword,
+    NewAccount
   },
   computed: {
     currentRouteName() {
@@ -50,5 +55,5 @@ export default {
 </script>
 
 <style scoped>
-/* @import './assets/datatables/datatables.min.css'; */
+/* @import './assets/datatables/datatables.min.css' */
 </style>
