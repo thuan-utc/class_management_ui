@@ -5,7 +5,7 @@
             <!-- Card Header - Accordion -->
             <a href="#searchCriteriaCard" class="d-block card-header py-3 collapsed" data-toggle="collapse"
                 role="button" aria-expanded="false" aria-controls="searchCriteriaCard">
-                <h5 class="m-0 font-weight-bold text-primary">Quản lý học  phí</h5>
+                <h5 class="m-0 font-weight-bold text-primary">Quản lý học viên</h5>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse" id="searchCriteriaCard" style="">
@@ -43,11 +43,11 @@
                             <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-3">
                                 <label>Action</label>
                                 <div>
-                                    <button type='reset' class='btn btn-md btn-warning btn-reset mr-1'>
+                                    <button type='reset' class='btn btn-sm btn-md btn-warning btn-reset mr-1'>
                                         <i class="fa fa-arrows"></i>
                                         Làm mới
                                     </button>
-                                    <button class='btn btn-info' type='submit' @click="search">
+                                    <button class='btn btn-sm btn-info' type='submit' @click="search">
                                         <i class="fa fa-search"></i>
                                         Tìm kiếm
                                     </button>
@@ -61,17 +61,17 @@
 
         <div class="card shadow mb-4">
             <div class="card-body">
-                <!-- <div class="row"><data-table :config="documentTableConfig"></data-table></div> -->
+                <div class="row"><data-table :config="studentTableConfig"></data-table></div>
             </div>
         </div>
     </div>
 </template>
 <script>
-import { search } from '../utils/document-api-js'
+import { search } from '../utils/student-api.js'
 import DataTable from '@/common/DataTable.vue'
 import moment from 'moment'
 export default {
-    name: 'tutor-fee',
+    name: 'all-student',
     components: {
         DataTable
     },
@@ -84,20 +84,21 @@ export default {
                 startCreatedDate: '',
                 endCreatedDate: ''
             },
-            documentTableConfig: null
+            studentTableConfig: null
         }
     },
     methods: {
         initTable() {
-            this.documentTableConfig = {
-                id: 'documentTable',
+            this.studentTableConfig = {
+                id: 'allStudentTable',
                 datatable: {
                     order: [[5, 'desc']],
                     searching: false,
                     lengthChange: !1,
-                    pageLength: 10,
+                    pageLength: 5,
                     select: 0,
                     scrollX: true,
+                    scrollX: '200px',
                     bServerSide: true,
                     bProcessing: false,
                     sAjaxSource: '',
@@ -106,23 +107,27 @@ export default {
                     },
                     aoColumns: [
                         { mData: 'id', bVisible: false },
-                        { sTitle: 'Tên Lớp', mData: 'className' },
-                        { sTitle: 'Tên Môn', mData: 'subjectName' },
-                        { sTitle: 'Tên tài liệu', mData: 'numberOfStudent', defaultContent: '0' },
+                        { sTitle: 'Tên họ', mData: 'firstName' },
+                        { sTitle: 'Tên đệm', mData: 'surname' },
+                        { sTitle: 'Tên', mData: 'lastName' },
+                        { sTitle: 'Email', mData: 'email' },
+                        { sTitle: 'Số điện thoại', mData: 'phone' },
+                        { sTitle: 'Lớp học', mData: 'note' },
+                        { sTitle: 'Môn học', mData: 'note' },
                         { sTitle: 'Ghi chú', mData: 'note' },
                         {
-                            sTitle: 'Ngày tạo', mData: 'createdDate',
+                            sTitle: 'Ngày thêm', mData: 'createdDate',
                             mRender: function (data, type, full) {
                                 return data !== null ? moment(data).format('YYYY/MM/DD hh:mm:ss') : ''
                             }
                         }
                     ],
-                    fnServerData: this.getAllDocument
+                    fnServerData: this.getAllStudent
 
                 }
             }
         },
-        getAllDocument(sSource, aoData, fnCallback) {
+        getAllStudent(sSource, aoData, fnCallback) {
             let paramMap = {}
             for (let i = 0; i < aoData.length; i++) {
                 paramMap[aoData[i].name] = aoData[i].value
@@ -156,7 +161,7 @@ export default {
             })
         },
         search() {
-            $('#' + this.documentTableConfig.id).DataTable().draw()
+            $('#' + this.studentTableConfig.id).DataTable().draw()
         },
         reset() {
             this.searchCriteria = {

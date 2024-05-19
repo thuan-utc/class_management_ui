@@ -8,17 +8,19 @@
             <div class="sidebar-brand-icon">
                 <i class="fas fa-school"></i>
             </div>
-            <div class="sidebar-brand-text mx-3">My class</div>
+            <div class="sidebar-brand-text mx-3">Lớp học</div>
         </a>
 
         <!-- Divider -->
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Dashboard -->
-        <li class="nav-item active">
-            <a class="nav-link" href="/dashboard">
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                aria-expanded="true" aria-controls="collapsePages">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
-                <span>Tổng quan</span></a>
+                <router-link to="/dashboard" style="color: white;"><span>Tổng quan</span></router-link>
+            </a>
         </li>
 
         <!-- Divider -->
@@ -29,25 +31,36 @@
             Lớp học
         </div>
 
-        <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                aria-expanded="true" aria-controls="collapseTwo">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                aria-expanded="true" aria-controls="collapsePages">
                 <i class="fas fa-fw fa-chalkboard"></i>
-                <!-- fa-fw -> fix width -->
-                <span>Quản lý lớp học</span>
-                <!-- <router-link to="/all-classrooms" style="color: white;"><span>Lớp học</span></router-link> -->
+                <router-link to="/all-classroom" style="color: white;"><span>Quản lý lớp học</span></router-link>
             </a>
-            <div id="collapseTwo" class="collapse" aria-labelledby="collapseTwo" data-parent="#accordionSidebar">
-                <div class="bg-white py-2 collapse-inner rounded">
-                    <a class="collapse-item" href="#"><router-link to="/all-classroom" style="color: black;">
-                            <span>Tất cả lớp học</span></router-link></a>
-                    <a class="collapse-item" href="#"><router-link to="/classroom-schedule" style="color: black;">
-                            <span>Lịch dạy</span></router-link></a>
-                    <a class="collapse-item" href="#"><router-link to="/classroom-schedule" style="color: black;">
-                            <span>Lớp học trong ngày</span></router-link></a>
-                </div>
-            </div>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-user-check"></i>
+                <router-link to="/class-attandance" style="color: white;"><span>Quản lý điểm danh</span></router-link>
+            </a>
+        </li>
+
+        <!-- <div class="nav-item">
+            <a class="nav-link collapsed" href="#" data-target="#collapseSetting" aria-expanded="true"
+                aria-controls="collapseSetting">
+                <i class="fas fa-fw fa-book"></i>
+                <router-link to="/class-document" style="color: white;"><span>Tài liệu</span></router-link>
+            </a>
+        </div> -->
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-fw fa-calculator"></i>
+                <router-link to="/tutor-fee" style="color: white;"><span>Tính học phí</span></router-link>
+            </a>
         </li>
 
         <!-- Divider -->
@@ -63,43 +76,9 @@
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                 aria-expanded="true" aria-controls="collapsePages">
                 <i class="fas fa-fw fa-user-graduate"></i>
-                <router-link to="/all-student" style="color: white;"><span>Tất cả học sinh</span></router-link>
+                <router-link to="/all-student" style="color: white;"><span>Quản lý học sinh</span></router-link>
             </a>
         </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Quản lý học phí
-        </div>
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                aria-expanded="true" aria-controls="collapsePages">
-                <i class="fas fa-fw fa-calculator"></i>
-                <router-link to="/tutor-fee" style="color: white;"><span>Học phí</span></router-link>
-            </a>
-        </li>
-
-        <hr class="sidebar-divider d-none d-md-block">
-
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Quản lý tài liệu
-        </div>
-
-        <div class="nav-item">
-            <!-- data-toggle="collapse" -->
-            <a class="nav-link collapsed" href="#" data-target="#collapseSetting" aria-expanded="true"
-                aria-controls="collapseSetting">
-                <i class="fas fa-fw fa-book"></i>
-                <router-link to="/class-document" style="color: white;"><span>Tài liệu</span></router-link>
-            </a>
-        </div>
-
 
         <hr class="sidebar-divider d-none d-md-block">
 

@@ -14,7 +14,7 @@ async function login(credential) {
   return await axios.post(`${AUTH_URL}/login`, credential).then((response) => {
     localStorage.setItem(ACCESS_TOKEN_KEY, response.data[ACCESS_TOKEN_KEY])
     localStorage.setItem(USER_NAME, credential.username)
-    Router.push("/dashboard")
+    return "Success"
   })
 }
 

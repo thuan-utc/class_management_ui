@@ -29,7 +29,7 @@
                                                 id="exampleInputPassword" placeholder="Password"
                                                 v-model="this.user.password">
                                         </div>
-                                        
+
                                         <button :disabled="isProcessing" @click.prevent="loginn"
                                             class="btn btn-primary btn-user btn-block">Login</button>
                                     </form>
@@ -40,7 +40,7 @@
                                         <a class="small" href="#" @click="redirectToForgotPassword">Forgot Password?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" @click="this.$router.push({ path: `/new-account`})">Create an
+                                        <a class="small" @click="this.$router.push({ path: `/new-account` })">Create an
                                             Account!</a>
                                     </div>
                                 </div>
@@ -85,7 +85,11 @@ export default {
     methods: {
         loginn() {
             this.isProcessing = true
-            login(this.user).catch(error => {
+            login(this.user).then((response) => {
+                this.isProcessing = false
+                this.$emit('login-success')
+                router.push("/dashboard")
+            }).catch(error => {
                 if (error.code === "ERR_NETWORK") {
                     this.errorMessage = error.message
                 } else {

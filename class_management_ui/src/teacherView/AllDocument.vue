@@ -43,11 +43,11 @@
                             <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-3">
                                 <label>Action</label>
                                 <div>
-                                    <button type='reset' class='btn btn-md btn-warning btn-reset mr-1'>
+                                    <button type='reset' class='btn btn-sm btn-warning btn-reset mr-1'>
                                         <i class="fa fa-arrows"></i>
                                         Làm mới
                                     </button>
-                                    <button class='btn btn-info' type='submit' @click="search">
+                                    <button class='btn btn-info btn-sm' type='submit' @click="search">
                                         <i class="fa fa-search"></i>
                                         Tìm kiếm
                                     </button>
@@ -67,7 +67,7 @@
     </div>
 </template>
 <script>
-import { search } from '../utils/document-api-js'
+import { search } from '../utils/document-api.js'
 import DataTable from '@/common/DataTable.vue'
 import moment from 'moment'
 export default {
@@ -92,12 +92,13 @@ export default {
             this.documentTableConfig = {
                 id: 'documentTable',
                 datatable: {
-                    order: [[5, 'desc']],
+                    order: [[0, 'desc']],
                     searching: false,
                     lengthChange: !1,
-                    pageLength: 10,
+                    pageLength: 5,
                     select: 0,
                     scrollX: true,
+                    scrollY: true,
                     bServerSide: true,
                     bProcessing: false,
                     sAjaxSource: '',
@@ -105,15 +106,22 @@ export default {
                         processing: '<div class="spinner-grow spinner-grow-lg text-primary" aria-hidden="false" aria-label="Loading" role="status"/>'
                     },
                     aoColumns: [
-                        { mData: 'id', bVisible: false },
-                        { sTitle: 'Tên Lớp', mData: 'className' },
-                        { sTitle: 'Tên Môn', mData: 'subjectName' },
-                        { sTitle: 'Tên tài liệu', mData: 'numberOfStudent', defaultContent: '0' },
-                        { sTitle: 'Ghi chú', mData: 'note' },
+                        { sTitle: 'Id', mData: 'id', bVisible: false },
+                        { sTitle: 'Tên tài liệu', mData: 'documentName' },
                         {
                             sTitle: 'Ngày tạo', mData: 'createdDate',
                             mRender: function (data, type, full) {
                                 return data !== null ? moment(data).format('YYYY/MM/DD hh:mm:ss') : ''
+                            }
+                        },
+                        {
+                            sTitle: 'Hành động',
+                            mData: 'id',
+                            mRender: function (data, tupe, full) {
+                                return `<button class="btn btn-outline-success btn-class-detail mr-2">
+                                            <span class="icon text-gray-600"><i class="fa fas fa-download"></i></span></button>
+                                        <button class="btn btn-outline-danger btn-class-detail mr-2">
+                                            <span class="icon text-gray-600"><i class="fas fas fa-trash-alt"></i></span></button>`
                             }
                         }
                     ],

@@ -3,7 +3,7 @@ import { getAccessToken } from './auth-api'
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`
 
-export { getAllClassroom, createNewClass, search, uploadListStudent, getClassDetail }
+export { getAllClassroom, createNewClass, search, uploadListStudent, getClassDetail, searchClassForStudent }
 
 function getAllClassroom() {
   const url = `${BASE_URL}/classroom`
@@ -18,6 +18,24 @@ function getAllClassroom() {
 
 function search(params) {
   const url = `${BASE_URL}/classroom/search`
+  let paramsNotNull = {}
+  Object.keys(params).forEach((key) => {
+    if (params[key] != null && params[key] !== '') {
+      paramsNotNull[key] = params[key].toString().trim()
+    }
+  })
+
+  return axios.get(
+    url,
+    {
+      headers: { Authorization: `Bearer ${getAccessToken()}` },
+      params: paramsNotNull
+    }
+  ).then(response => response.data)
+}
+
+function searchClassForStudent(params) {
+  const url = `${BASE_URL}/classroom/class-for-student`
   let paramsNotNull = {}
   Object.keys(params).forEach((key) => {
     if (params[key] != null && params[key] !== '') {

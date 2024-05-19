@@ -5,7 +5,7 @@
             <!-- Card Header - Accordion -->
             <a href="#searchCriteriaCard" class="d-block card-header py-3 collapsed" data-toggle="collapse"
                 role="button" aria-expanded="false" aria-controls="searchCriteriaCard">
-                <h5 class="m-0 font-weight-bold text-primary">Quản lý học viên</h5>
+                <h5 class="m-0 font-weight-bold text-primary">Quản lý học  phí</h5>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse" id="searchCriteriaCard" style="">
@@ -67,11 +67,11 @@
     </div>
 </template>
 <script>
-import { search } from '../utils/document-api-js'
+import { search } from '../utils/document-api.js'
 import DataTable from '@/common/DataTable.vue'
 import moment from 'moment'
 export default {
-    name: 'all-student',
+    name: 'tutor-fee',
     components: {
         DataTable
     },

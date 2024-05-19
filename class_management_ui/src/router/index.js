@@ -26,13 +26,19 @@ const router = createRouter({
     {
       path: '/dashboard',
       name: 'DashBoard',
-      component: () => import('../components/Dashboard.vue'),
+      component: () => import('../teacherView/Dashboard.vue'),
       meta: { requiresAuth: true }
     },
     {
       path: '/all-classroom',
       name: 'AllClassroom',
-      component: () => import('../components/AllClassroom.vue'),
+      component: () => import('../teacherView/AllClassroom.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/student-classroom',
+      name: 'StudentClassroom',
+      component: () => import('../studentView/StudentClassroom.vue'),
       meta: { requiresAuth: true }
     },
     {
@@ -44,19 +50,25 @@ const router = createRouter({
     {
       path: '/class-document',
       name: 'ClassDocument',
-      component: () => import('../components/ClassDocument.vue'),
+      component: () => import('../teacherView/AllDocument.vue'),
       meta: { requiresAuth: true }
     },
     {
       path: '/tutor-fee',
       name: 'TutorFee',
-      component: () => import('../components/TutorFee.vue'),
+      component: () => import('../teacherView/TutorFee.vue'),
       meta: { requiresAuth: true }
     },
     {
       path: '/all-student',
       name: 'AllStudent',
-      component: () => import('../components/AllStudent.vue'),
+      component: () => import('../teacherView/AllStudent.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/class-attandance',
+      name: 'ClassAttandance',
+      component: () => import('../teacherView/ClassAttandance.vue'),
       meta: { requiresAuth: true }
     },
     {
