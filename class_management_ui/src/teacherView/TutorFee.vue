@@ -13,7 +13,7 @@
                         </div>
                         <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2 d-flex justify-content-end">
                             <button class='btn btn-info' type='submit'>
-                                <i class="fa fa-regular fa-calculator"></i>
+                                <i class="fa fa-search"></i>
                                 Tìm kiếm
                             </button>
                         </div>
@@ -22,83 +22,121 @@
             </div>
         </div>
 
-        <div class="card shadow mb-4" v-if="listTutorFeeTableConfig !== null">
+        <div class="card shadow mb-4" v-if="selectedClass !== null">
             <div class="card-header py-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold text-primary">Học phí đã tính</h6>
-                    <!-- <button class="btn btn-success btn-sm" type="button">
-                        <i class="fa fas fa-download"></i>
-                        H
-                    </button> -->
+                    <h6 class="m-0 font-weight-bold text-primary">Học phí theo tháng</h6>
 
                 </div>
             </div>
             <div class="card-body">
+                <form @submit.prevent=''>
+                    <div class="row">
+                        <div class="form-group col-4">
+                            <label for="className" class="col-12 col-form-label">Tên lớp:</label>
+                            <div class="col-sm-12">
+                                <input disabled id="className" class="form-control" type="text"
+                                    v-model="selectedClass.className">
+                            </div>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="subjectName" class="col-sm-12 col-form-label">Tên môn:</label>
+                            <div class="col-sm-12">
+                                <input disabled id="subjectName" class="form-control" type="text"
+                                    v-model="selectedClass.subjectName">
+                            </div>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="note" class="col-sm-12 col-form-label">Ghi chú:</label>
+                            <div class="col-sm-12">
+                                <textarea disabled id="note" class="form-control"
+                                    v-model="selectedClass.note"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-4">
+                            <label for="className" class="col-12 col-form-label">Tháng:</label>
+                            <div class="col-sm-12">
+                                <input type="number" class="form-control" v-model="month" min="1" max="12">
+                            </div>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="className" class="col-12 col-form-label">Năm:</label>
+                            <div class="col-sm-12">
+                                <input type="number" class="form-control" v-model="year">
+                            </div>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="className" class="col-12 col-form-label">Giá 1 buổi học (VND):</label>
+                            <div class="col-sm-12">
+                                <input type="number" class="form-control" v-model="classSessionPrice">
+                            </div>
+                        </div>
 
-                <div class="row"><data-table :config="listTutorFeeTableConfig"></data-table></div>
+                    </div>
+                    <div class="row d-flex justify-content-end mb-3">
+                        <div class="form-group col-6 d-flex justify-content-end">
+                            <button class='btn btn-success' @click="showListTutorFee">
+                                <i class="fa fa-calculator"></i>
+                                Tính toán
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <div class="card shadow mb-4" v-if="detailTutorFeeTableConfig !== null">
-            <div class="card-header py-3 col-12">
-                <h6 class="m-0 font-weight-bold text-primary col-4">Chi tiết</h6>
-            </div>
-            <div class="card-header py-3 col-12">
-                <div class="d-flex align-items-end flex-wrap">
-                    <div class="form-group d-flex align-items-center col-sm-6 col-md-3 col-lg-3 col-xl-2 mb-0">
-                        <label for="month" class="mr-2 mb-0">Tháng</label>
-                        <input disabled type="number" class="form-control" v-model="month" min="1" max="12">
-                    </div>
-                    <div class="form-group d-flex align-items-center col-sm-6 col-md-3 col-lg-3 col-xl-2 mb-0 ml-3">
-                        <label for="year" class="mr-2 mb-0">Năm</label>
-                        <input disabled type="number" class="form-control" v-model="year">
-                    </div>
-                    <div v-if="totalFee !== null" class="form-group d-flex align-items-center col-sm-6 mb-0 ml-3">
-                        <label for="totalFee" class="mr-2 mb-0">Tổng học phí</label>
-                        <span class="mr-2">{{ totalFee }} vnd</span>
-                        <i class="fa fa-solid fa-money-bill"></i>
+        <div class="card shadow mb-4" v-if="tutorFeeTable !== null">
+            <div class="card-header py-3 col-12 tutor-fee-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Chi tiết</h6>
+                    <div v-if="totalFee !== null" class="form-group d-flex align-items-center mr-3">
+                            <label for="totalFee" class="mr-2 mb-0">Tổng học phí</label>
+                            <span class="mr-2">{{ totalFee }} vnd</span>
+                            <i class="fa fa-solid fa-money-bill"></i>
+                        </div>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-sm btn-primary mr-3" @click="sendEmail">
+                            <i class="fa fa-envelope"></i> Gửi Email
+                        </button>
+                        <button class="btn btn-sm btn-success" @click="downloadFile">
+                            <i class="fa fa-download"></i> Tải Xuống (XLSX)
+                        </button>
                     </div>
                 </div>
             </div>
-
             <div class="card-body">
-                <div class="row"><data-table :config="detailTutorFeeTableConfig"></data-table></div>
+                <div class="row"><data-table :config="tutorFeeTable"></data-table></div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-// import { calculateMonthlyFeeApi } from '../utils/tuition-fee-api.js'
 import moment from 'moment'
+import { calculateTutorFee } from '../utils/tutor-fee-api'
+import { getClassDetail } from '../utils/all-class-room-api.js'
+import DataTable from '@/common/DataTable.vue'
 
 export default {
     name: 'tutor-fee',
+    components: {
+        DataTable
+    },
     props: ['classIdFromParent'],
     data() {
         return {
             classId: null,
             month: new Date().getMonth() + 1,
             year: new Date().getFullYear(),
-            totalFee: '100',
+            totalFee: null,
             selectedClass: null,
-            listTutorFeeTableConfig: null,
-            detailTutorFeeTableConfig: null
+            tutorFeeTable: null,
+            classSessionPrice: '50000'
         }
     },
     methods: {
-        calculateMonthlyFee() {
-            if (!this.classId || !this.month || !this.year) {
-                alert("Vui lòng nhập đầy đủ thông tin.");
-                return;
-            }
-            // calculateMonthlyFeeApi(this.classId, this.month, this.year).then((response) => {
-            //     this.totalFee = response.data.totalFee;
-            // }).catch((error) => {
-            //     console.error("Error calculating monthly fee: ", error);
-            //     alert("Không tính được học phí. Vui lòng thử lại sau.");
-            // });
-        },
         updateRoute() {
             // Update the route with the new classId value
             if (this.classId) {
@@ -111,35 +149,24 @@ export default {
         getClassInfo() {
             getClassDetail(this.classId).then((response) => {
                 this.selectedClass = response
-                this.isPageList = false
-                if (this.listTutorFeeTableConfig === null) {
-                    this.initListTutorFeeTableConfig()
-                } else {
-                    $('#' + this.listTutorFeeTableConfig.id).DataTable().draw()
-                }
             }).catch((error) => {
                 console.log("Error fecth class detail " + error)
                 alert('Không tìm thấy thông tin')
             })
         },
-        initListTutorFeeTableConfig() {
-            this.scheduleTableConfig = {
-                id: 'scheduleTable',
-                events: [
-                    {
-                        event: 'click',
-                        selector: '.btn-check-attandance',
-                        handler: this.checkAttandance
-                    }
-                ],
+        initTutorFeeTable() {
+            this.tutorFeeTable = {
+                id: 'tutor-fee-table',
                 datatable: {
-                    order: [[5, 'desc']],
+                    order: [[0, 'desc']],
                     searching: false,
                     lengthChange: !1,
                     pageLength: 5,
                     select: 0,
+                    paging: false,
                     scrollX: true,
-                    scrollX: '200px',
+                    scrollY: true,
+                    scrollY: '200px',
                     bServerSide: true,
                     bProcessing: false,
                     sAjaxSource: '',
@@ -147,66 +174,79 @@ export default {
                         processing: '<div class="spinner-grow spinner-grow-lg text-primary" aria-hidden="false" aria-label="Loading" role="status"/>'
                     },
                     aoColumns: [
-                        { sTitle: 'Id', mData: 'id', bVisible: true },
-                        { sTitle: 'Ngày', mData: 'day' },
+                        { sTitle: 'Họ tên', mData: 'studentName' },
+                        { sTitle: 'Email', mData: 'email' },
+                        { sTitle: 'Số điện thoại', mData: 'phone' },
+                        { sTitle: 'Số buổi đi học', mData: 'numberOfClassesAttended' },
+                        { sTitle: 'Tổng số buổi', mData: 'totalNumberOfClasses' },
                         {
-                            sTitle: 'Ngày trong tuần',
-                            mData: 'dayInWeek',
+                            sTitle: 'Thành tiền', mData: 'feeAmount',
                             mRender: function (data, type, full) {
-                                if (data === 'MONDAY') {
-                                    return "Thứ 2"
-                                } else if (data === 'TUESDAY') {
-                                    return "Thứ 3"
-                                } else if (data === 'WEDNESDAY') {
-                                    return "Thứ 4"
-                                } else if (data === 'THURSDAY') {
-                                    return "Thứ 5"
-                                } else if (data === 'FRIDAY') {
-                                    return "Thứ 6"
-                                } else if (data === 'SATURDAY') {
-                                    return "Thứ 7"
-                                } else if (data === 'SUNDAY') {
-                                    return "Chủ nhật"
+                                if (typeof data === 'number') {
+                                    // Format the number with commas for thousands separators
+                                    return data.toLocaleString('en-US') + ' vnd';
+                                } else {
+                                    return data;
                                 }
-                            }
-                        },
-                        {
-                            sTitle: 'Ca học trong ngày',
-                            mData: 'periodInDay',
-                            mRender: function (data, type, full) {
-                                if (data === 'PERIOD_1') {
-                                    return "Ca 1"
-                                } else if (data === 'PERIOD_2') {
-                                    return "Ca 2"
-                                } else if (data === 'PERIOD_3') {
-                                    return "Ca 3"
-                                } else if (data === 'PERIOD_4') {
-                                    return "Ca 4"
-                                } else if (data === 'PERIOD_5') {
-                                    return "Ca 5"
-                                } else if (data === 'PERIOD_6') {
-                                    return "Ca 6"
-                                }
-                            }
-                        },
-                        {
-                            sTitle: 'Ngày tạo', mData: 'createdDate',
-                            mRender: function (data, type, full) {
-                                return data !== null ? moment(data).format('YYYY/MM/DD hh:mm:ss') : ''
-                            }
-                        },
-                        {
-                            sTitle: 'Điểm danh',
-                            mData: 'id',
-                            mRender: function (data, tupe, full) {
-                                return `<button class="btn btn-outline-warning btn-sm btn-check-attandance mr-2">
-                          <span class="icon text-gray-600"><i class="fa fas fa-edit"></i></span> </button>`
                             }
                         }
                     ],
-                    fnServerData: this.getAllSchedule
+                    fnServerData: this.getListTutorFee
 
                 }
+            }
+        },
+        getListTutorFee(sSource, aoData, fnCallback) {
+            // let paramMap = {}
+            // for (let i = 0; i < aoData.length; i++) {
+            //     paramMap[aoData[i].name] = aoData[i].value
+            // }
+            // let pageSize = paramMap.length
+            // let start = paramMap.start
+            // let pageNum = (start === 0) ? 0 : (start / pageSize)
+            // let sort = ''
+            // if (paramMap.order && paramMap.order.length > 0) {
+            //     sort = paramMap.columns[paramMap.order[0].column].data + ',' + paramMap.order[0].dir
+            // } else {
+            //     sort = paramMap.columns[0].data + ',asc'
+            // }
+            // let restParams = {}
+            // restParams.size = pageSize
+            // restParams.page = pageNum
+            // restParams.sort = sort
+            // restParams.classId = this.classId
+            let data = {}
+            let restParams = {}
+            restParams.classId = this.classId
+            restParams.month = this.month
+            restParams.year = this.year
+            restParams.classSessionPrice = this.classSessionPrice
+            calculateTutorFee(restParams).then((response) => {
+                data.recordsTotal = response.totalElements
+                data.recordsFiltered = response.totalElements
+                data.data = response.content
+                this.totalFee = response.content.reduce((acc, tutorFee) => {
+                    return acc + tutorFee.feeAmount;
+                }, 0);
+                this.totalFee = this.totalFee.toLocaleString('en-US')
+                fnCallback(data)
+            }).catch((error) => {
+                console.log(error)
+                alert({
+                    title: 'Error',
+                    content: error.message
+                })
+            })
+        },
+        showListTutorFee() {
+            if (this.classSessionPrice === null || this.classSessionPrice === '') {
+                alert("Nhập giá 1 buổi học!")
+                return
+            }
+            if (this.tutorFeeTable === null) {
+                this.initTutorFeeTable()
+            } else {
+                $('#' + this.tutorFeeTable.id).DataTable().draw()
             }
         }
     },
@@ -216,7 +256,7 @@ export default {
             this.classId = classIdFromParent
         }
         if (this.classId) {
-            this.getClacalculateMonthlyFeessInfo()
+            this.getClassInfo()
         }
     }
 }
