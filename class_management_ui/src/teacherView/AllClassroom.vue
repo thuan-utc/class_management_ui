@@ -4,8 +4,8 @@
       <!-- search card -->
       <div class="card shadow mb-4">
         <!-- Card Header - Accordion -->
-        <a href="#searchCriteriaCard" class="d-block card-header py-3 collapsed" data-toggle="collapse" role="button"
-          aria-expanded="false" aria-controls="searchCriteriaCard">
+        <a ref="searchLink" href="#searchCriteriaCard" class="d-block card-header py-3 collapsed" data-toggle="collapse"
+          role="button" aria-expanded="false" aria-controls="searchCriteriaCard">
           <h5 class="m-0 font-weight-bold text-primary">Quản lý lớp học</h5>
         </a>
         <!-- Card Content - Collapse -->
@@ -204,19 +204,10 @@
               </div>
 
               <p>*Thêm danhh sách học viên và lịch học ở chi tiết lớp học sau khi khởi tạo thông tin cơ bản.</p>
-
-              <!-- <div class="form-group row">
-                <label class="col-md-4 col-form-label">Danh sách học viên</label>
-                <div class="col-md-8">
-                  <button class="btn btn-sm btn-success mr-1" data-target="#create-newclass-modal">
-                    Lịch học
-                  </button>
-                </div>
-              </div> -->
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+            <button type="button" class="btn btn-secondary" @click="resetNewClassModel">Hủy</button>
             <button type="button" class="btn btn-primary" @click="createClassroom">Tạo</button>
           </div>
         </div>
@@ -224,8 +215,7 @@
     </div>
 
     <!-- Modal Add student-->
-    <div class="modal fade" id="add-student-modal" tabindex="-1" role="dialog" aria-labelledby="create-newclass-modal"
-      aria-hidden="true">
+    <div class="modal fade" id="add-student-modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -283,8 +273,8 @@
     </div>
 
     <!-- Modal add list student-->
-    <div class="modal fade" id="add-list-student-modal" tabindex="-1" role="dialog"
-      aria-labelledby="create-newclass-modal" aria-hidden="true">
+    <div class="modal fade" id="add-list-student-modal" tabindex="-1" role="dialog" aria-labelledby=""
+      aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -327,8 +317,8 @@
     </div>
 
     <!-- Modal add class schedule-->
-    <div class="modal fade" id="add-class-schedule-modal" tabindex="-1" role="dialog"
-      aria-labelledby="create-newclass-modal" aria-hidden="true">
+    <div class="modal fade" id="add-class-schedule-modal" tabindex="-1" role="dialog" aria-labelledby=""
+      aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -396,8 +386,8 @@
     </div>
 
     <!-- Modal add class document-->
-    <div class="modal fade" id="add-class-document-modal" tabindex="-1" role="dialog"
-      aria-labelledby="create-newclass-modal" aria-hidden="true">
+    <div class="modal fade" id="add-class-document-modal" tabindex="-1" role="dialog" aria-labelledby=""
+      aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -518,15 +508,29 @@ export default {
             event: 'click',
             selector: '.btn-class-detail',
             handler: this.showClassDetail
+          },
+          {
+            event: 'click',
+            selector: '.btn-check-attendance',
+            handler: this.handleCheckAttendance
+          },
+          {
+            event: 'click',
+            selector: '.btn-check-exam-score',
+            handler: this.handleCheckExamScore
+          },
+          {
+            event: 'click',
+            selector: '.btn-calculate-fee',
+            handler: this.handleCheckTutorFee
           }
         ],
         datatable: {
-          order: [[5, 'desc']],
+          order: [[0, 'desc']],
           searching: false,
           lengthChange: !1,
           pageLength: 5,
           select: 0,
-          scrollX: '100px',
           scrollX: true,
           bServerSide: true,
           bProcessing: false,
@@ -549,16 +553,24 @@ export default {
             {
               sTitle: 'Điểm danh', mData: 'id',
               mRender: function (data, type, full) {
-                return `<button class="btn btn-outline-success btn-sm btn-class-detail mr-2">
+                return `<button class="btn btn-outline-success btn-sm btn-check-attendance mr-2">
                           <span class="icon text-gray-600"><i class="fas fa-user-check"></i></span>
                         </button>`
               }
             },
             {
-              sTitle: 'Nhập điểm', mData: 'id',
+              sTitle: 'Điểm kiểm tra', mData: 'id',
               mRender: function (data, type, full) {
-                return `<button class="btn btn-outline-warning btn-sm btn-class-detail mr-2">
+                return `<button class="btn btn-outline-warning btn-sm btn-check-exam-score mr-2">
                           <span class="icon text-gray-600"><i class="fas fa-pencil-alt"></i></span>
+                        </button>`
+              }
+            },
+            {
+              sTitle: 'Tính học phí', mData: 'id',
+              mRender: function (data, type, full) {
+                return `<button class="btn btn-outline-primary btn-sm btn-calculate-fee mr-2">
+                          <span class="icon text-gray-600"><i class="fas fa-calculator"></i></span>
                         </button>`
               }
             },
@@ -986,10 +998,38 @@ export default {
         this.isProcessing = false
         $('#add-class-document-modal').modal('hide')
       })
+    },
+    handleCheckAttendance(e) {
+      let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+      let classIdFromParent = currentRow.id
+      if (classIdFromParent) {
+        this.$router.push({ name: 'ClassAttendance', params: { classIdFromParent } })
+      } else {
+        alert("Có lỗi xảy ra!")
+      }
+    },
+    handleCheckExamScore(e) {
+      let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+      let classIdFromParent = currentRow.id
+      if (classIdFromParent) {
+        this.$router.push({ name: 'ExamScore', params: { classIdFromParent } })
+      } else {
+        alert("Có lỗi xảy ra!")
+      }
+    },
+    handleCheckTutorFee(e) {
+      let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+      let classIdFromParent = currentRow.id
+      if (classIdFromParent) {
+        this.$router.push({ name: 'TutorFee', params: { classIdFromParent } })
+      } else {
+        alert("Có lỗi xảy ra!")
+      }
     }
   },
   mounted() {
     this.initTable()
+    this.$refs.searchLink.click();
   }
 }
 </script>

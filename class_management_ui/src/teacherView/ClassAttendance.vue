@@ -1,24 +1,21 @@
 <template>
     <div class="container-fluid">
         <div class="card shadow mb-4">
-            <!-- <div class="card-header bg-primary text-white">
-                <h5 class="m-0 font-weight-bold">Quản lý điểm danh</h5> 
-            </div>-->
-            <a href="#searchCriteriaCard" class="d-block card-header py-3 collapsed" data-toggle="collapse"
-                role="button" aria-expanded="false" aria-controls="searchCriteriaCard">
+            <div class="card-header py-3">
                 <h5 class="m-0 font-weight-bold text-primary">Quản lý điểm danh</h5>
-            </a>
+            </div>
+            
             <div class="card-body">
                 <!-- search search-->
                 <form @submit.prevent='getClassInfo'>
                     <div class="row d-flex align-items-end">
                         <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2">
                             <label for="customerName">ID lớp</label>
-                            <input type='text' class='form-control' v-model='classId'>
+                            <input type='number' class='form-control' v-model='classId' @input="updateRoute">
                         </div>
 
                         <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2 d-flex justify-content-end">
-                            <button class='btn btn-info' type='submit' @click="getClassInfo">
+                            <button class='btn btn-info' type='submit'>
                                 <i class="fa fa-search"></i>
                                 Tìm kiếm
                             </button>
@@ -54,18 +51,36 @@
                 </div>
             </div>
 
-            <div class="card-body"></div>
-
-
         </div>
 
-        <div class="card shadow mb-4" v-if="classAttendanceTableConfig !== null">
+        <div class="card shadow mb-4" v-if="scheduleTableConfig !== null">
             <div class="card-body">
                 <div class="row d-flex justify-content-end mb-3">
                     <button class="btn btn-success btn-sm" type="button">
                         <i class="fa fas fa-download"></i>
                         Kết quả điểm danh
                     </button>
+                </div>
+                <div class="row"><data-table :config="scheduleTableConfig"></data-table></div>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4" v-if="classAttendanceTableConfig !== null">
+            <div class="card-body"> 
+                <div v-if="searchSchedule !== null" class="col-12">
+                    <div class="form-group row">
+                        <label for="className" class="col-sm-1 col-form-label">Ngày học:</label>
+                        <div class="col-sm-3">
+                            <input disabled id="className" class="form-control" type="date"
+                                v-model="formatDateMMDDYYYYtoDDMMYYYY">
+                        </div>
+                        <div class="col d-flex justify-content-end">
+                            <button class="btn btn-success btn mr-5" type="button" @click="submitResult">
+                                <i class="fa fas fa-save"></i>
+                                Lưu
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 <div class="row"><data-table :config="classAttendanceTableConfig"></data-table></div>
             </div>
@@ -75,29 +90,55 @@
 <script>
 import { searchSchedule } from '../utils/class-schedule-api.js'
 import DataTable from '@/common/DataTable.vue'
-import { getClassDetail } from '../utils/all-class-room-api'
-import { fetchClassAttendance } from '@/utils/class-attendance-api.js'
+import { getClassDetail } from '../utils/all-class-room-api.js'
+import { fetchClassAttendance, saveClassAttendanceResult } from '@/utils/class-attendance-api.js'
 
 import moment from 'moment'
+import { error } from 'jquery'
 export default {
-    name: 'class-attandance',
+    name: 'class-attendance',
     components: {
         DataTable
     },
+    props: ['classIdFromParent'],
     data() {
         return {
             classId: null,
             scheduleId: null,
             scheduleTableConfig: null,
-            studnetTableConfig: null,
             classAttendanceTableConfig: null,
-            selectedClass: null
+            selectedClass: null,
+            selectedSchedule: null
         }
+    },
+    computed: {
+        formattedDate() {
+            return moment(this.selectedClass.createdDate).format("DD/MM/YYYY");
+        },
+        formatDateMMDDYYYYtoDDMMYYYY() {
+            // let dateString = this.selectedSchedule.day
+            // if (!dateString || !/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+            //     throw new Error('Invalid date format. Please use MM/DD/YYYY.');
+            // }
+            // const [month, day, year] = dateString.split('/');
+            // return `${day}/${month}/${year}`;
+
+            return moment(this.selectedSchedule.day).format("DD/MM/YYYY");
+        }
+    },
+    watch: {
+        '$el': {
+            handler() {
+                // Whenever the component's DOM is updated, reattach the event listeners
+                this.attachCheckboxEventListeners()
+            },
+            deep: true,
+        },
     },
     methods: {
         initScheduleTable() {
             this.scheduleTableConfig = {
-                id: 'allStudentTable',
+                id: 'scheduleTable',
                 events: [
                     {
                         event: 'click',
@@ -233,7 +274,7 @@ export default {
             this.classAttendanceTableConfig = {
                 id: 'classAttendanceTable',
                 datatable: {
-                    order: [[5, 'desc']],
+                    order: [[0, 'desc']],
                     searching: false,
                     lengthChange: !1,
                     pageLength: 10,
@@ -249,60 +290,101 @@ export default {
                     },
                     aoColumns: [
                         { sTitle: 'Id', mData: 'id', bVisible: true },
-                        { sTitle: 'Họ', mData: 'firstName' },
-                        { sTitle: 'Tên đệm', mData: 'surname' },
-                        { sTitle: 'Tên', mData: 'lastName' },
+                        { sTitle: 'Họ tên', mData: 'name' },
                         { sTitle: 'Email', mData: 'email' },
                         {
-                            sTitle: 'Ngày đăng kí', mData: 'createdDate',
+                            sTitle: 'Điểm danh', mData: 'isAttended',
                             mRender: function (data, type, full) {
-                                return data !== null ? moment(data).format('YYYY/MM/DD hh:mm:ss') : ''
-                            }
-                        },
-                        {
-                            sTitle: "Sửa",
-                            mData: "id",
-                            mRender: function (data, type, full) {
-                                return `<button class="btn btn-outline-warning btn-sm btn-class-detail mr-2">
-                          <span class="icon text-gray-600"><i class="fas fa-pencil-alt"></i></span>
-                        </button>`
+                                return '<input type="checkbox" class="attend-checkbox" data-id="' + full.id + '" ' + (data ? 'checked' : '') + '>';
                             }
                         }
                     ],
-                    fnServerData: this.getAllClassAttendance
-                },
-                getAllClassAttendance(sSource, aoData, fnCallback) {
-                    getAllStudent(this.selectedClass.id).then((response) => {
-                        let data = {}
-                        data.recordsTotal = response.totalElements
-                        data.recordsFiltered = response.totalElements
-                        data.data = response.content
-                        fnCallback(data)
-                    }).catch((error) => {
-                        console.log(error)
-                        alert({
-                            title: 'Error',
-                            content: error.message
-                        })
-                    })
-                },
-            }
-        },
-        checkAttandance(e) {
-            let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
-            fetchClassAttendance(this.scheduleId).then((response) => {
-                this.selectedClass = response
-                this.isPageList = false
-                if (this.scheduleTableConfig === null) {
-                    this.initClassAttendanceTable()
-                } else {
-                    $('#' + this.classAttendanceTableConfig.id).DataTable().draw()
+                    fnServerData: this.fetchClassAttendance
                 }
+            }
+
+        },
+        fetchClassAttendance(sSource, aoData, fnCallback) {
+            fetchClassAttendance(this.scheduleId).then((response) => {
+                let data = {}
+                data.recordsTotal = response.totalElements
+                data.recordsFiltered = response.totalElements
+                data.data = response.content
+                fnCallback(data)
+                this.attachCheckboxEventListeners()
             }).catch((error) => {
                 console.log("Error fecth class detail " + error)
                 alert('Không tìm thấy thông tin')
             })
+        },
+        checkAttandance(e) {
+            let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+            this.scheduleId = currentRow.id
+            this.selectedSchedule = currentRow
+            if (this.classAttendanceTableConfig === null) {
+                this.initClassAttendanceTable()
+            } else {
+                $('#' + this.classAttendanceTableConfig.id).DataTable().draw()
+            }
+        },
+        submitResult() {
+            let attendanceData = [];
+            console.log($)
+            let rows = $('#' + this.classAttendanceTableConfig.id).DataTable().rows().nodes();
+            rows.each((index, row) => {
+                let rowData = $('#' + this.classAttendanceTableConfig.id).DataTable().row(row).data()
+                let studentId = rowData.id
+                let isChecked = rowData.isAttended
+
+                attendanceData.push({
+                    id: studentId,
+                    isAttended: isChecked
+                });
+            });
+            saveClassAttendanceResult(attendanceData).then((response) => {
+                console.log("Save class attendance result successfully");
+                alert("Đã lưu")
+            }).catch((error) => {
+                console.log(error)
+                alert("", "Lưu thất bại!")
+            })
+
+        },
+        attachCheckboxEventListeners() {
+            const checkboxes = this.$el.querySelectorAll('.attend-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.removeEventListener('change', this.handleCheckboxChange);
+                checkbox.addEventListener('change', this.handleCheckboxChange);
+            });
+        },
+
+        handleCheckboxChange(e) {
+            const checkbox = e.target;
+            const isChecked = checkbox.checked;
+            const row = checkbox.closest('tr');
+            const rowIndex = $('#' + this.classAttendanceTableConfig.id).DataTable().row(row).index();
+            const rowData = $('#' + this.classAttendanceTableConfig.id).DataTable().row(rowIndex).data();
+            rowData.isAttended = isChecked;
+        },
+        updateRoute() {
+            // Update the route with the new classId value
+            if (this.classId) {
+                this.$router.replace({ name: 'ClassAttendance', params: { classIdFromParent: this.classId } });
+            } else {
+                // If classId is empty, redirect to the route without classId parameter
+                this.$router.replace({ name: 'ClassAttendance' });
+            }
+        }
+    },
+    mounted() {
+        const classIdFromParent = this.$route.params.classIdFromParent
+        if (classIdFromParent) {
+            this.classId = classIdFromParent
+        }
+        if (this.classId) {
+            this.getClassInfo()
         }
     }
+
 }
 </script>

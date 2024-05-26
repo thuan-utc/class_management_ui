@@ -26,7 +26,7 @@ import Login from './views/Login.vue'
 import NavBar from './teacherView/NavBar.vue'
 import TopBar from './components/TopBar.vue'
 import FooterBar from './components/FooterBar.vue'
-import './assets/vendor/jquery/jquery.js'
+// import './assets/vendor/jquery/jquery.min.js'
 import './assets/vendor/bootstrap/js/bootstrap.bundle.min.js'
 import './assets/vendor/jquery-easing/jquery.easing.min.js'
 import './assets/js/sb-admin-2.min.js'
@@ -38,7 +38,6 @@ import ForgotPassword from './views/ForgotPassword.vue'
 import NewAccount from './views/NewAccount.vue'
 import StudentNavBar from './studentView/StudentNavBar.vue'
 import { getUserInfo } from './utils/user-api'
-import { error } from 'jquery'
 
 export default {
   name: 'app',
@@ -67,7 +66,7 @@ export default {
         }
       }).catch((error) => { 
         console.log(error)
-        alert("Không thể tìm thấy thông tin người dùng!")
+        // alert("Không thể tìm thấy thông tin người dùng!")
       })
 
     },

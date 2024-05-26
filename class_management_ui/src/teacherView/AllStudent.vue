@@ -3,8 +3,8 @@
         <!-- search card -->
         <div class="card shadow mb-4">
             <!-- Card Header - Accordion -->
-            <a href="#searchCriteriaCard" class="d-block card-header py-3 collapsed" data-toggle="collapse"
-                role="button" aria-expanded="false" aria-controls="searchCriteriaCard">
+            <a ref="searchLink" href="#searchCriteriaCard" class="d-block card-header py-3 collapsed"
+                data-toggle="collapse" role="button" aria-expanded="false" aria-controls="searchCriteriaCard">
                 <h5 class="m-0 font-weight-bold text-primary">Quản lý học viên</h5>
             </a>
             <!-- Card Content - Collapse -->
@@ -13,29 +13,24 @@
                     <!-- search search-->
                     <form @submit.prevent='search' @reset='reset'>
                         <div class="row">
-                            <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2">
-                                <label for="customerName">Tên lớp</label>
-                                <input type='text' class='form-control' v-model='searchCriteria.className'>
-                            </div>
-
                             <div class="form-group col-sm-5 col-md-3 col-lg-3 col-xl-2">
-                                <label for="customerName">Tên môn</label>
-                                <input type='text' class='form-control' v-model='searchCriteria.subjectName'>
-                            </div>
-
-                            <div class="form-group col-sm-5 col-md-3 col-lg-3 col-xl-2">
-                                <label for="customerName">Tên tài liệu</label>
+                                <label for="customerName">Tên</label>
                                 <input type='text' class='form-control' v-model='searchCriteria.documentName'>
                             </div>
 
-                            <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2">
-                                <label for="customerName">Ngày tạo bắt đầu</label>
-                                <input type='date' class='form-control' v-model='searchCriteria.startCreatedDate'>
+                            <div class="form-group col-sm-5 col-md-3 col-lg-3 col-xl-2">
+                                <label for="customerName">Email</label>
+                                <input type='text' class='form-control' v-model='searchCriteria.documentName'>
                             </div>
 
-                            <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2">
-                                <label for="customerName">Ngày tạo kết thúc</label>
-                                <input type='date' class='form-control' v-model='searchCriteria.endCreatedDate'>
+                            <div class="form-group col-sm-5 col-md-3 col-lg-3 col-xl-2">
+                                <label for="customerName">Số điện thoại</label>
+                                <input type='text' class='form-control' v-model='searchCriteria.documentName'>
+                            </div>
+
+                            <div class="form-group col-sm-5 col-md-3 col-lg-3 col-xl-2">
+                                <label for="customerName">Tên lớp học</label>
+                                <input type='text' class='form-control' v-model='searchCriteria.documentName'>
                             </div>
 
                         </div>
@@ -92,7 +87,7 @@ export default {
             this.studentTableConfig = {
                 id: 'allStudentTable',
                 datatable: {
-                    order: [[5, 'desc']],
+                    order: [[0, 'desc']],
                     searching: false,
                     lengthChange: !1,
                     pageLength: 5,
@@ -120,6 +115,26 @@ export default {
                             mRender: function (data, type, full) {
                                 return data !== null ? moment(data).format('YYYY/MM/DD hh:mm:ss') : ''
                             }
+                        },
+                        {
+                            sTitle: 'Sửa', mData: 'id',
+                            mRender: function (data, type, full) {
+                                return `
+                                <button class="btn btn-outline-warning btn-sm btn-class-detail mr-2">
+                                    <span class="icon text-gray-600"><i class="fas fa-pencil-alt"></i></span>
+                                </button>`;
+                            }
+
+                        },
+                        {
+                            sTitle: 'Xóa', mData: 'id',
+                            mRender: function (data, type, full) {
+                                return `
+                                <button class="btn btn-outline-danger btn-sm btn-class-detail">
+                                    <span class="icon text-gray-600"><i class="fas fa-trash-alt"></i></span>
+                                </button>`
+                            }
+
                         }
                     ],
                     fnServerData: this.getAllStudent
@@ -176,6 +191,7 @@ export default {
     },
     mounted() {
         this.initTable()
+        this.$refs.searchLink.click()
     }
 }
 </script>

@@ -1,103 +1,145 @@
 <template>
     <div class="container-fluid">
-        <!-- search card -->
         <div class="card shadow mb-4">
-            <!-- Card Header - Accordion -->
-            <a href="#searchCriteriaCard" class="d-block card-header py-3 collapsed" data-toggle="collapse"
-                role="button" aria-expanded="false" aria-controls="searchCriteriaCard">
-                <h5 class="m-0 font-weight-bold text-primary">Quản lý học  phí</h5>
-            </a>
-            <!-- Card Content - Collapse -->
-            <div class="collapse" id="searchCriteriaCard" style="">
-                <div class="card-body">
-                    <!-- search search-->
-                    <form @submit.prevent='search' @reset='reset'>
-                        <div class="row">
-                            <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2">
-                                <label for="customerName">Tên lớp</label>
-                                <input type='text' class='form-control' v-model='searchCriteria.className'>
-                            </div>
-
-                            <div class="form-group col-sm-5 col-md-3 col-lg-3 col-xl-2">
-                                <label for="customerName">Tên môn</label>
-                                <input type='text' class='form-control' v-model='searchCriteria.subjectName'>
-                            </div>
-
-                            <div class="form-group col-sm-5 col-md-3 col-lg-3 col-xl-2">
-                                <label for="customerName">Tên tài liệu</label>
-                                <input type='text' class='form-control' v-model='searchCriteria.documentName'>
-                            </div>
-
-                            <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2">
-                                <label for="customerName">Ngày tạo bắt đầu</label>
-                                <input type='date' class='form-control' v-model='searchCriteria.startCreatedDate'>
-                            </div>
-
-                            <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2">
-                                <label for="customerName">Ngày tạo kết thúc</label>
-                                <input type='date' class='form-control' v-model='searchCriteria.endCreatedDate'>
-                            </div>
-
+            <div class="card-header py-3">
+                <h5 class="m-0 font-weight-bold text-primary">Tính học phí</h5>
+            </div>
+            <div class="card-body">
+                <form @submit.prevent='getClassInfo'>
+                    <div class="row d-flex align-items-end">
+                        <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2">
+                            <label for="classId">ID lớp</label>
+                            <input type='number' class='form-control' v-model='classId'>
                         </div>
-                        <div class="row">
-                            <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-3">
-                                <label>Action</label>
-                                <div>
-                                    <button type='reset' class='btn btn-md btn-warning btn-reset mr-1'>
-                                        <i class="fa fa-arrows"></i>
-                                        Làm mới
-                                    </button>
-                                    <button class='btn btn-info' type='submit' @click="search">
-                                        <i class="fa fa-search"></i>
-                                        Tìm kiếm
-                                    </button>
-                                </div>
-                            </div>
+                        <div class="form-group col-sm-6 col-md-3 col-lg-3 col-xl-2 d-flex justify-content-end">
+                            <button class='btn btn-info' type='submit'>
+                                <i class="fa fa-regular fa-calculator"></i>
+                                Tìm kiếm
+                            </button>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <div class="card shadow mb-4">
+        <div class="card shadow mb-4" v-if="listTutorFeeTableConfig !== null">
+            <div class="card-header py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Học phí đã tính</h6>
+                    <!-- <button class="btn btn-success btn-sm" type="button">
+                        <i class="fa fas fa-download"></i>
+                        H
+                    </button> -->
+
+                </div>
+            </div>
             <div class="card-body">
-                <!-- <div class="row"><data-table :config="documentTableConfig"></data-table></div> -->
+
+                <div class="row"><data-table :config="listTutorFeeTableConfig"></data-table></div>
+            </div>
+        </div>
+
+        <div class="card shadow mb-4" v-if="detailTutorFeeTableConfig !== null">
+            <div class="card-header py-3 col-12">
+                <h6 class="m-0 font-weight-bold text-primary col-4">Chi tiết</h6>
+            </div>
+            <div class="card-header py-3 col-12">
+                <div class="d-flex align-items-end flex-wrap">
+                    <div class="form-group d-flex align-items-center col-sm-6 col-md-3 col-lg-3 col-xl-2 mb-0">
+                        <label for="month" class="mr-2 mb-0">Tháng</label>
+                        <input disabled type="number" class="form-control" v-model="month" min="1" max="12">
+                    </div>
+                    <div class="form-group d-flex align-items-center col-sm-6 col-md-3 col-lg-3 col-xl-2 mb-0 ml-3">
+                        <label for="year" class="mr-2 mb-0">Năm</label>
+                        <input disabled type="number" class="form-control" v-model="year">
+                    </div>
+                    <div v-if="totalFee !== null" class="form-group d-flex align-items-center col-sm-6 mb-0 ml-3">
+                        <label for="totalFee" class="mr-2 mb-0">Tổng học phí</label>
+                        <span class="mr-2">{{ totalFee }} vnd</span>
+                        <i class="fa fa-solid fa-money-bill"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row"><data-table :config="detailTutorFeeTableConfig"></data-table></div>
             </div>
         </div>
     </div>
 </template>
+
 <script>
-import { search } from '../utils/document-api.js'
-import DataTable from '@/common/DataTable.vue'
+// import { calculateMonthlyFeeApi } from '../utils/tuition-fee-api.js'
 import moment from 'moment'
+
 export default {
     name: 'tutor-fee',
-    components: {
-        DataTable
-    },
+    props: ['classIdFromParent'],
     data() {
         return {
-            searchCriteria: {
-                className: '',
-                subjectName: '',
-                documentName: '',
-                startCreatedDate: '',
-                endCreatedDate: ''
-            },
-            documentTableConfig: null
+            classId: null,
+            month: new Date().getMonth() + 1,
+            year: new Date().getFullYear(),
+            totalFee: '100',
+            selectedClass: null,
+            listTutorFeeTableConfig: null,
+            detailTutorFeeTableConfig: null
         }
     },
     methods: {
-        initTable() {
-            this.documentTableConfig = {
-                id: 'documentTable',
+        calculateMonthlyFee() {
+            if (!this.classId || !this.month || !this.year) {
+                alert("Vui lòng nhập đầy đủ thông tin.");
+                return;
+            }
+            // calculateMonthlyFeeApi(this.classId, this.month, this.year).then((response) => {
+            //     this.totalFee = response.data.totalFee;
+            // }).catch((error) => {
+            //     console.error("Error calculating monthly fee: ", error);
+            //     alert("Không tính được học phí. Vui lòng thử lại sau.");
+            // });
+        },
+        updateRoute() {
+            // Update the route with the new classId value
+            if (this.classId) {
+                this.$router.replace({ name: 'TutorFee', params: { classIdFromParent: this.classId } });
+            } else {
+                // If classId is empty, redirect to the route without classId parameter
+                this.$router.replace({ name: 'TutorFee' });
+            }
+        },
+        getClassInfo() {
+            getClassDetail(this.classId).then((response) => {
+                this.selectedClass = response
+                this.isPageList = false
+                if (this.listTutorFeeTableConfig === null) {
+                    this.initListTutorFeeTableConfig()
+                } else {
+                    $('#' + this.listTutorFeeTableConfig.id).DataTable().draw()
+                }
+            }).catch((error) => {
+                console.log("Error fecth class detail " + error)
+                alert('Không tìm thấy thông tin')
+            })
+        },
+        initListTutorFeeTableConfig() {
+            this.scheduleTableConfig = {
+                id: 'scheduleTable',
+                events: [
+                    {
+                        event: 'click',
+                        selector: '.btn-check-attandance',
+                        handler: this.checkAttandance
+                    }
+                ],
                 datatable: {
                     order: [[5, 'desc']],
                     searching: false,
                     lengthChange: !1,
-                    pageLength: 10,
+                    pageLength: 5,
                     select: 0,
                     scrollX: true,
+                    scrollX: '200px',
                     bServerSide: true,
                     bProcessing: false,
                     sAjaxSource: '',
@@ -105,72 +147,77 @@ export default {
                         processing: '<div class="spinner-grow spinner-grow-lg text-primary" aria-hidden="false" aria-label="Loading" role="status"/>'
                     },
                     aoColumns: [
-                        { mData: 'id', bVisible: false },
-                        { sTitle: 'Tên Lớp', mData: 'className' },
-                        { sTitle: 'Tên Môn', mData: 'subjectName' },
-                        { sTitle: 'Tên tài liệu', mData: 'numberOfStudent', defaultContent: '0' },
-                        { sTitle: 'Ghi chú', mData: 'note' },
+                        { sTitle: 'Id', mData: 'id', bVisible: true },
+                        { sTitle: 'Ngày', mData: 'day' },
+                        {
+                            sTitle: 'Ngày trong tuần',
+                            mData: 'dayInWeek',
+                            mRender: function (data, type, full) {
+                                if (data === 'MONDAY') {
+                                    return "Thứ 2"
+                                } else if (data === 'TUESDAY') {
+                                    return "Thứ 3"
+                                } else if (data === 'WEDNESDAY') {
+                                    return "Thứ 4"
+                                } else if (data === 'THURSDAY') {
+                                    return "Thứ 5"
+                                } else if (data === 'FRIDAY') {
+                                    return "Thứ 6"
+                                } else if (data === 'SATURDAY') {
+                                    return "Thứ 7"
+                                } else if (data === 'SUNDAY') {
+                                    return "Chủ nhật"
+                                }
+                            }
+                        },
+                        {
+                            sTitle: 'Ca học trong ngày',
+                            mData: 'periodInDay',
+                            mRender: function (data, type, full) {
+                                if (data === 'PERIOD_1') {
+                                    return "Ca 1"
+                                } else if (data === 'PERIOD_2') {
+                                    return "Ca 2"
+                                } else if (data === 'PERIOD_3') {
+                                    return "Ca 3"
+                                } else if (data === 'PERIOD_4') {
+                                    return "Ca 4"
+                                } else if (data === 'PERIOD_5') {
+                                    return "Ca 5"
+                                } else if (data === 'PERIOD_6') {
+                                    return "Ca 6"
+                                }
+                            }
+                        },
                         {
                             sTitle: 'Ngày tạo', mData: 'createdDate',
                             mRender: function (data, type, full) {
                                 return data !== null ? moment(data).format('YYYY/MM/DD hh:mm:ss') : ''
                             }
+                        },
+                        {
+                            sTitle: 'Điểm danh',
+                            mData: 'id',
+                            mRender: function (data, tupe, full) {
+                                return `<button class="btn btn-outline-warning btn-sm btn-check-attandance mr-2">
+                          <span class="icon text-gray-600"><i class="fa fas fa-edit"></i></span> </button>`
+                            }
                         }
                     ],
-                    fnServerData: this.getAllDocument
+                    fnServerData: this.getAllSchedule
 
                 }
             }
-        },
-        getAllDocument(sSource, aoData, fnCallback) {
-            let paramMap = {}
-            for (let i = 0; i < aoData.length; i++) {
-                paramMap[aoData[i].name] = aoData[i].value
-            }
-            let pageSize = paramMap.length
-            let start = paramMap.start
-            let pageNum = (start === 0) ? 0 : (start / pageSize)
-            let sort = ''
-            if (paramMap.order && paramMap.order.length > 0) {
-                sort = paramMap.columns[paramMap.order[0].column].data + ',' + paramMap.order[0].dir
-            } else {
-                sort = paramMap.columns[0].data + ',asc'
-            }
-            let restParams = {}
-            restParams.size = pageSize
-            restParams.page = pageNum
-            restParams.sort = sort
-            restParams = Object.assign(restParams, this.searchCriteria)
-            let data = {}
-            search(restParams).then((response) => {
-                data.recordsTotal = response.totalElements
-                data.recordsFiltered = response.totalElements
-                data.data = response.content
-                fnCallback(data)
-            }).catch((error) => {
-                console.log(error)
-                alert({
-                    title: 'Error',
-                    content: error.message
-                })
-            })
-        },
-        search() {
-            $('#' + this.documentTableConfig.id).DataTable().draw()
-        },
-        reset() {
-            this.searchCriteria = {
-                className: '',
-                subjectName: '',
-                documentName: '',
-                startCreatedDate: null,
-                endCreatedDate: null
-            }
-            this.search()
-        },
+        }
     },
     mounted() {
-        this.initTable()
+        const classIdFromParent = this.$route.params.classIdFromParent
+        if (classIdFromParent) {
+            this.classId = classIdFromParent
+        }
+        if (this.classId) {
+            this.getClacalculateMonthlyFeessInfo()
+        }
     }
 }
 </script>

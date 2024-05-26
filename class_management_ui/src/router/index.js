@@ -26,7 +26,7 @@ const router = createRouter({
     {
       path: '/dashboard',
       name: 'DashBoard',
-      component: () => import('../teacherView/Dashboard.vue'),
+      component: () => import('../components/Dashboard.vue'),
       meta: { requiresAuth: true }
     },
     {
@@ -54,21 +54,27 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: '/tutor-fee',
-      name: 'TutorFee',
-      component: () => import('../teacherView/TutorFee.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
       path: '/all-student',
       name: 'AllStudent',
       component: () => import('../teacherView/AllStudent.vue'),
       meta: { requiresAuth: true }
     },
     {
-      path: '/class-attandance',
-      name: 'ClassAttandance',
-      component: () => import('../teacherView/ClassAttandance.vue'),
+      path: '/class-attendance/:classIdFromParent?',
+      name: 'ClassAttendance',
+      component: () => import('../teacherView/ClassAttendance.vue'),
+      meta: { requiresAuth: true }
+    },    
+    {
+      path: '/exam-score/:classIdFromParent?',
+      name: 'ExamScore',
+      component: () => import('../teacherView/ExamScore.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/tutor-fee/:classIdFromParent?',
+      name: 'TutorFee',
+      component: () => import('../teacherView/TutorFee.vue'),
       meta: { requiresAuth: true }
     },
     {

@@ -43,17 +43,17 @@
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                 aria-expanded="true" aria-controls="collapsePages">
                 <i class="fas fa-user-check"></i>
-                <router-link to="/class-attandance" style="color: white;"><span>Quản lý điểm danh</span></router-link>
+                <router-link to="/class-attendance" style="color: white;"><span>Quản lý điểm danh</span></router-link>
             </a>
         </li>
 
-        <!-- <div class="nav-item">
-            <a class="nav-link collapsed" href="#" data-target="#collapseSetting" aria-expanded="true"
-                aria-controls="collapseSetting">
-                <i class="fas fa-fw fa-book"></i>
-                <router-link to="/class-document" style="color: white;"><span>Tài liệu</span></router-link>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                aria-expanded="true" aria-controls="collapsePages">
+                <i class="fas fa-star"></i>
+                <router-link to="/exam-score" style="color: white;"><span>Quản lý điểm</span></router-link>
             </a>
-        </div> -->
+        </li>
 
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
