@@ -87,7 +87,7 @@ export default {
             this.studentTableConfig = {
                 id: 'allStudentTable',
                 datatable: {
-                    order: [[0, 'desc']],
+                    order: [[3, 'asc']],
                     searching: false,
                     lengthChange: !1,
                     pageLength: 5,

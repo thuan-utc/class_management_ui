@@ -4,7 +4,7 @@
             <div class="card-header py-3">
                 <h5 class="m-0 font-weight-bold text-primary">Quản lý điểm danh</h5>
             </div>
-            
+
             <div class="card-body">
                 <!-- search search-->
                 <form @submit.prevent='getClassInfo'>
@@ -33,7 +33,8 @@
 
                         <label for="createdDate" class="col-sm-2 col-form-label">Ngày tạo:</label>
                         <div class="col-sm-3">
-                            <input disabled id="createdDate" class="form-control" type="text" v-model="formattedDate">
+                            <input disabled id="createdDate" class="form-control" type="text"
+                                v-model="formattedCreatedDate">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -66,24 +67,61 @@
         </div>
 
         <div class="card shadow mb-4" v-if="classAttendanceTableConfig !== null">
-            <div class="card-body"> 
-                <div v-if="searchSchedule !== null" class="col-12">
-                    <div class="form-group row">
-                        <label for="className" class="col-sm-1 col-form-label">Ngày học:</label>
-                        <div class="col-sm-3">
-                            <input disabled id="className" class="form-control" type="date"
-                                v-model="formatDateMMDDYYYYtoDDMMYYYY">
-                        </div>
-                        <div class="col d-flex justify-content-end">
-                            <button class="btn btn-success btn mr-5" type="button" @click="submitResult">
-                                <i class="fa fas fa-save"></i>
-                                Lưu
-                            </button>
-                        </div>
+            <div class="card-header py-3 col-12 tutor-fee-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Chi tiết</h6>
+                </div>
+            </div>
+
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-6">
+                        <form class="row">
+                            <div class="form-group col-7">
+                                <label for="className" class="col-12 col-form-label">Ngày học:</label>
+                                <div class="col-12">
+                                    <input disabled id="className" class="form-control" type="text"
+                                        v-model="selectedSchedule.day">
+                                </div>
+                            </div>
+                            <div class="form-group col-7">
+                                <label for="className" class="col-12 col-form-label">Ngày trong tuần:</label>
+                                <div class="col-12">
+                                    <input disabled id="className" class="form-control" type="text"
+                                        :value="formattedDayInWeek">
+                                </div>
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="className" class="col-12 col-form-label">Ca học:</label>
+                                <div class="col-12">
+                                    <input disabled id="className" class="form-control" type="text"
+                                        :value="formattedPeriodInDay">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="attendanceChart" width="300" height="300"></canvas>
                     </div>
                 </div>
-                <div class="row"><data-table :config="classAttendanceTableConfig"></data-table></div>
+
             </div>
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col d-flex justify-content-end">
+                        <button class="btn btn-success btn mr-2" type="button" @click="submitResult">
+                            <i class="fa fas fa-save"></i>
+                            Lưu
+                        </button>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <data-table :config="classAttendanceTableConfig"></data-table>
+                </div>
+            </div>
+
         </div>
     </div>
 </template>
@@ -92,6 +130,7 @@ import { searchSchedule } from '../utils/class-schedule-api.js'
 import DataTable from '@/common/DataTable.vue'
 import { getClassDetail } from '../utils/all-class-room-api.js'
 import { fetchClassAttendance, saveClassAttendanceResult } from '@/utils/class-attendance-api.js'
+import Chart from 'chart.js/auto'
 
 import moment from 'moment'
 import { error } from 'jquery'
@@ -108,22 +147,55 @@ export default {
             scheduleTableConfig: null,
             classAttendanceTableConfig: null,
             selectedClass: null,
-            selectedSchedule: null
+            selectedSchedule: null,
+            attendanceChartData: null,
+            attendanceChart: null
         }
     },
     computed: {
-        formattedDate() {
-            return moment(this.selectedClass.createdDate).format("DD/MM/YYYY");
+        formattedCreatedDate() {
+            return moment(this.selectedClass.createdDate).format("DD/MM/YYYY")
         },
-        formatDateMMDDYYYYtoDDMMYYYY() {
-            // let dateString = this.selectedSchedule.day
-            // if (!dateString || !/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-            //     throw new Error('Invalid date format. Please use MM/DD/YYYY.');
-            // }
-            // const [month, day, year] = dateString.split('/');
-            // return `${day}/${month}/${year}`;
-
-            return moment(this.selectedSchedule.day).format("DD/MM/YYYY");
+        formattedScheduleDay() {
+            return moment(this.selectedSchedule.day).format("DD/MM/YYYY")
+        },
+        formattedDayInWeek() {
+            let data = this.selectedSchedule.dayInWeek
+            switch (data) {
+                case 'MONDAY':
+                    return "Thứ 2"
+                case 'TUESDAY':
+                    return "Thứ 3"
+                case 'WEDNESDAY':
+                    return "Thứ 4"
+                case 'THURSDAY':
+                    return "Thứ 5"
+                case 'FRIDAY':
+                    return "Thứ 6"
+                case 'SATURDAY':
+                    return "Thứ 7"
+                case 'SUNDAY':
+                    return "Chủ nhật"
+                default:
+                    return ''
+            }
+        },
+        formattedPeriodInDay() {
+            let data = this.selectedSchedule.periodInDay
+            if (data === 'PERIOD_1') {
+                return "Ca 1"
+            } else if (data === 'PERIOD_2') {
+                return "Ca 2"
+            } else if (data === 'PERIOD_3') {
+                return "Ca 3"
+            } else if (data === 'PERIOD_4') {
+                return "Ca 4"
+            } else if (data === 'PERIOD_5') {
+                return "Ca 5"
+            } else if (data === 'PERIOD_6') {
+                return "Ca 6"
+            }
+            return ''
         }
     },
     watch: {
@@ -133,7 +205,7 @@ export default {
                 this.attachCheckboxEventListeners()
             },
             deep: true,
-        },
+        }
     },
     methods: {
         initScheduleTable() {
@@ -295,7 +367,7 @@ export default {
                         {
                             sTitle: 'Điểm danh', mData: 'isAttended',
                             mRender: function (data, type, full) {
-                                return '<input type="checkbox" class="attend-checkbox" data-id="' + full.id + '" ' + (data ? 'checked' : '') + '>';
+                                return '<input type="checkbox" class="attend-checkbox" data-id="' + full.id + '" ' + (data ? 'checked' : '') + '>'
                             }
                         }
                     ],
@@ -312,6 +384,7 @@ export default {
                 data.data = response.content
                 fnCallback(data)
                 this.attachCheckboxEventListeners()
+                this.updateAttendanceChart(data.data)
             }).catch((error) => {
                 console.log("Error fecth class detail " + error)
                 alert('Không tìm thấy thông tin')
@@ -328,9 +401,9 @@ export default {
             }
         },
         submitResult() {
-            let attendanceData = [];
+            let attendanceData = []
             console.log($)
-            let rows = $('#' + this.classAttendanceTableConfig.id).DataTable().rows().nodes();
+            let rows = $('#' + this.classAttendanceTableConfig.id).DataTable().rows().nodes()
             rows.each((index, row) => {
                 let rowData = $('#' + this.classAttendanceTableConfig.id).DataTable().row(row).data()
                 let studentId = rowData.id
@@ -339,11 +412,12 @@ export default {
                 attendanceData.push({
                     id: studentId,
                     isAttended: isChecked
-                });
-            });
+                })
+            })
             saveClassAttendanceResult(attendanceData).then((response) => {
-                console.log("Save class attendance result successfully");
+                console.log("Save class attendance result successfully")
                 alert("Đã lưu")
+                this.updateAttendanceChart(response.content)
             }).catch((error) => {
                 console.log(error)
                 alert("", "Lưu thất bại!")
@@ -351,29 +425,58 @@ export default {
 
         },
         attachCheckboxEventListeners() {
-            const checkboxes = this.$el.querySelectorAll('.attend-checkbox');
+            const checkboxes = this.$el.querySelectorAll('.attend-checkbox')
             checkboxes.forEach(checkbox => {
-                checkbox.removeEventListener('change', this.handleCheckboxChange);
-                checkbox.addEventListener('change', this.handleCheckboxChange);
-            });
+                checkbox.removeEventListener('change', this.handleCheckboxChange)
+                checkbox.addEventListener('change', this.handleCheckboxChange)
+            })
         },
 
         handleCheckboxChange(e) {
-            const checkbox = e.target;
-            const isChecked = checkbox.checked;
-            const row = checkbox.closest('tr');
-            const rowIndex = $('#' + this.classAttendanceTableConfig.id).DataTable().row(row).index();
-            const rowData = $('#' + this.classAttendanceTableConfig.id).DataTable().row(rowIndex).data();
-            rowData.isAttended = isChecked;
+            const checkbox = e.target
+            const isChecked = checkbox.checked
+            const row = checkbox.closest('tr')
+            const rowIndex = $('#' + this.classAttendanceTableConfig.id).DataTable().row(row).index()
+            const rowData = $('#' + this.classAttendanceTableConfig.id).DataTable().row(rowIndex).data()
+            rowData.isAttended = isChecked
         },
         updateRoute() {
             // Update the route with the new classId value
             if (this.classId) {
-                this.$router.replace({ name: 'ClassAttendance', params: { classIdFromParent: this.classId } });
+                this.$router.replace({ name: 'ClassAttendance', params: { classIdFromParent: this.classId } })
             } else {
                 // If classId is empty, redirect to the route without classId parameter
-                this.$router.replace({ name: 'ClassAttendance' });
+                this.$router.replace({ name: 'ClassAttendance' })
             }
+        },
+        updateAttendanceChart(attendanceData) {
+            const attendedCount = attendanceData.filter(student => student.isAttended).length
+            const notAttendedCount = attendanceData.length - attendedCount
+            this.$nextTick(() => {
+                // Destroy existing chart if it exists
+                if (this.attendanceChart) {
+                    this.attendanceChart.destroy()
+                }
+
+                const ctx = document.getElementById('attendanceChart').getContext('2d')
+                this.attendanceChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Đi học', 'Nghỉ học'],
+                        datasets: [{
+                            data: [attendedCount, notAttendedCount],
+                            backgroundColor: ['#36a2eb', '#ff6384']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                })
+            })
+        },
+        formateDate(date) {
+            return moment(date).format("DD/MM/YYYY")
         }
     },
     mounted() {

@@ -900,7 +900,7 @@ export default {
             { sTitle: 'Id', mData: 'id', bVisible: false },
             { sTitle: 'Tên tài liệu', mData: 'documentName' },
             {
-              sTitle: 'Ngày tạo', mData: 'createdDate',
+              sTitle: 'Ngày tải lên', mData: 'createdDate',
               mRender: function (data, type, full) {
                 return data !== null ? moment(data).format('YYYY/MM/DD hh:mm:ss') : ''
               }
