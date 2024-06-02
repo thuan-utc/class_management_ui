@@ -34,22 +34,6 @@
             </a>
         </li>
 
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Thông tin học phí
-        </div>
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                aria-expanded="true" aria-controls="collapsePages">
-                <i class="fas fa-fw fa-calculator"></i>
-                <router-link to="/tutor-fee" style="color: white;"><span>Học phí</span></router-link>
-            </a>
-        </li>
-
         <hr class="sidebar-divider d-none d-md-block">
 
         <div class="nav-item">

@@ -3,7 +3,7 @@ import { getAccessToken } from './auth-api'
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`
 
-export { fetchClassExamScore, saveExamScoreResult, createNewExam, fetchClassExam }
+export { fetchClassExamScore, saveExamScoreResult, createNewExam, fetchClassExam, fetchStudentExamResult }
 
 function createNewExam(newExamRequest) {
     const url = `${BASE_URL}/exam-score`
@@ -44,6 +44,17 @@ function saveExamScoreResult(result) {
     return axios.put(
         url,
         result,
+        {
+            headers: {
+                Authorization: `Bearer ${getAccessToken()}`
+            }
+        }).then(response => response.data)
+}
+
+function fetchStudentExamResult(classId) {
+    const url = `${BASE_URL}/exam-score/student-exam-result?classId=${classId}`
+    return axios.get(
+        url,
         {
             headers: {
                 Authorization: `Bearer ${getAccessToken()}`

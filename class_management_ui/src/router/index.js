@@ -64,7 +64,7 @@ const router = createRouter({
       name: 'ClassAttendance',
       component: () => import('../teacherView/ClassAttendance.vue'),
       meta: { requiresAuth: true }
-    },    
+    },  
     {
       path: '/exam-score/:classIdFromParent?',
       name: 'ExamScore',
