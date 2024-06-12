@@ -110,14 +110,24 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col d-flex justify-content-end">
-                        <button class="btn btn-success btn mr-2" type="button" @click="submitResult">
+                        <button v-if="editAble" class="btn btn-success btn mr-2" type="button" @click="submitResult">
                             <i class="fa fas fa-save"></i>
                             Lưu
+                        </button>
+                        <button v-if="!editAble" class="btn btn-warning btn mr-2" type="button"
+                            @click="this.editAble = true">
+                            <i class="fa fas fa-edit"></i>
+                            Sửa
+                        </button>
+                        <button v-else="!editAble" class="btn btn-secondary btn mr-2" type="button"
+                            @click="this.editAble = false">
+                            <i class="fa fas fa-cancel"></i>
+                            Hủy
                         </button>
                     </div>
 
                 </div>
-                <div class="row">
+                <div class="row"> <!--:class="editAble ? '' : 'disabled-table'"?-->
                     <data-table :config="classAttendanceTableConfig"></data-table>
                 </div>
             </div>
@@ -149,7 +159,8 @@ export default {
             selectedClass: null,
             selectedSchedule: null,
             attendanceChartData: null,
-            attendanceChart: null
+            attendanceChart: null,
+            editAble: false
         }
     },
     computed: {
@@ -205,6 +216,10 @@ export default {
                 this.attachCheckboxEventListeners()
             },
             deep: true,
+        },
+        editAble(newVal) {
+            // When editAble changes, update DataTable rendering
+            $('#' + this.classAttendanceTableConfig.id).DataTable().draw()
         }
     },
     methods: {
@@ -367,8 +382,12 @@ export default {
                         {
                             sTitle: 'Điểm danh', mData: 'isAttended',
                             mRender: function (data, type, full) {
-                                return '<input type="checkbox" class="attend-checkbox" data-id="' + full.id + '" ' + (data ? 'checked' : '') + '>'
-                            }
+                                const disabledAttr = this.editAble ? '' : 'disabled="disabled"';
+                                return `<input type="checkbox" class="attend-checkbox" data-id="${full.id}" ${data ? 'checked' : ''} ${disabledAttr}>`;
+
+                            }.bind(this)
+                            // return '<input type="checkbox" class="attend-checkbox" data-id="' + full.id + '" ' + (data ? 'checked' : '') + '>'
+
                         }
                     ],
                     fnServerData: this.fetchClassAttendance
@@ -384,6 +403,7 @@ export default {
                 data.data = response.content
                 fnCallback(data)
                 this.attachCheckboxEventListeners()
+                this.attendanceChartData = data.data
                 this.updateAttendanceChart(data.data)
             }).catch((error) => {
                 console.log("Error fecth class detail " + error)
@@ -417,10 +437,13 @@ export default {
             saveClassAttendanceResult(attendanceData).then((response) => {
                 console.log("Save class attendance result successfully")
                 alert("Đã lưu")
-                this.updateAttendanceChart(response.content)
+                // this.updateAttendanceChart(response.content)
+                this.attendanceChartData = response.content
+                this.editAble = false
             }).catch((error) => {
                 console.log(error)
                 alert("", "Lưu thất bại!")
+                this.editAble = false
             })
 
         },
@@ -439,6 +462,20 @@ export default {
             const rowIndex = $('#' + this.classAttendanceTableConfig.id).DataTable().row(row).index()
             const rowData = $('#' + this.classAttendanceTableConfig.id).DataTable().row(rowIndex).data()
             rowData.isAttended = isChecked
+            const updatedAttendanceData = this.attendanceChartData.map((data) => {
+                if (data.id === rowData.id) {
+                    return {
+                        ...data,
+                        isAttended: isChecked
+                    };
+                } else {
+                    return data;
+                }
+            });
+
+            this.attendanceChartData = updatedAttendanceData;
+
+            this.updateAttendanceChart(this.attendanceChartData);
         },
         updateRoute() {
             // Update the route with the new classId value
@@ -491,3 +528,14 @@ export default {
 
 }
 </script>
+
+<style scoped>
+.disabled-table {
+    pointer-events: none;
+    /* Disable pointer events */
+    opacity: 0.6;
+    /* Lower opacity */
+    filter: grayscale(100%);
+    /* Optional: grayscale effect */
+}
+</style>

@@ -50,96 +50,96 @@
       </div>
 
       <!-- attendance result -->
-    <div class="card shadow mb-4" v-if="classAttendanceTableConfig !== null">
-      <div class="card-header py-3 col-12 tutor-fee-header">
-        <div class="d-flex justify-content-between align-items-center">
-          <h6 class="m-0 font-weight-bold text-primary">Kết quả điểm danh</h6>
-        </div>
-      </div>
-
-      <div class="card-header">
-        <div class="row">
-          <div class="col-6">
-            <form class="row">
-              <div class="form-group col-7">
-                <label for="className" class="col-12 col-form-label">Giáo viên:</label>
-                <div class="col-12">
-                  <input disabled id="className" class="form-control" type="text" v-model="selectedClass.teacherName">
-                </div>
-              </div>
-              <div class="form-group col-7">
-                <label for="className" class="col-12 col-form-label">Lớp học:</label>
-                <div class="col-12">
-                  <input disabled id="className" class="form-control" type="text" v-model="selectedClass.className">
-                </div>
-              </div>
-              <div class="form-group col-7">
-                <label for="className" class="col-12 col-form-label">Môn học:</label>
-                <div class="col-12">
-                  <input disabled id="className" class="form-control" type="text" v-model="selectedClass.subjectName">
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="col-md-6">
-            <canvas id="attendanceChart" width="300" height="300"></canvas>
+      <div class="card shadow mb-4" v-if="classAttendanceTableConfig !== null">
+        <div class="card-header py-3 col-12 tutor-fee-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Kết quả điểm danh</h6>
           </div>
         </div>
-      </div>
 
-      <div class="card-body">
-        <div class="row">
-          <data-table :config="classAttendanceTableConfig"></data-table>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- exam result -->
-    <div class="card shadow mb-4" v-if="examScoreTableConfig !== null">
-      <div class="card-header py-3 col-12 tutor-fee-header">
-        <div class="d-flex justify-content-between align-items-center">
-          <h6 class="m-0 font-weight-bold text-primary">Danh sách điểm</h6>
-        </div>
-      </div>
-
-      <div class="card-header">
-        <div class="row">
-          <div class="col-6">
-            <form class="row">
-              <div class="form-group col-7">
-                <label for="className" class="col-12 col-form-label">Giáo viên:</label>
-                <div class="col-12">
-                  <input disabled id="className" class="form-control" type="text" v-model="selectedClass.teacherName">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-6">
+              <form class="row">
+                <div class="form-group col-7">
+                  <label for="className" class="col-12 col-form-label">Giáo viên:</label>
+                  <div class="col-12">
+                    <input disabled id="className" class="form-control" type="text" v-model="selectedClass.teacherName">
+                  </div>
                 </div>
-              </div>
-              <div class="form-group col-7">
-                <label for="className" class="col-12 col-form-label">Lớp học:</label>
-                <div class="col-12">
-                  <input disabled id="className" class="form-control" type="text" v-model="selectedClass.className">
+                <div class="form-group col-7">
+                  <label for="className" class="col-12 col-form-label">Lớp học:</label>
+                  <div class="col-12">
+                    <input disabled id="className" class="form-control" type="text" v-model="selectedClass.className">
+                  </div>
                 </div>
-              </div>
-              <div class="form-group col-7">
-                <label for="className" class="col-12 col-form-label">Môn học:</label>
-                <div class="col-12">
-                  <input disabled id="className" class="form-control" type="text" v-model="selectedClass.subjectName">
+                <div class="form-group col-7">
+                  <label for="className" class="col-12 col-form-label">Môn học:</label>
+                  <div class="col-12">
+                    <input disabled id="className" class="form-control" type="text" v-model="selectedClass.subjectName">
+                  </div>
                 </div>
-              </div>
-            </form>
-          </div>
-          <div class="col-md-6">
-            <canvas id="examScoreChart" width="300" height="250"></canvas>
+              </form>
+            </div>
+            <div class="col-md-6">
+              <canvas id="attendanceChart" width="300" height="300"></canvas>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="card-body">
-        <div class="row">
-          <data-table :config="examScoreTableConfig"></data-table>
+        <div class="card-body">
+          <div class="row">
+            <data-table :config="classAttendanceTableConfig"></data-table>
+          </div>
         </div>
+
       </div>
 
-    </div>
+      <!-- exam result -->
+      <div class="card shadow mb-4" v-if="examScoreTableConfig !== null">
+        <div class="card-header py-3 col-12 tutor-fee-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Danh sách điểm</h6>
+          </div>
+        </div>
+
+        <div class="card-header">
+          <div class="row">
+            <div class="col-6">
+              <form class="row">
+                <div class="form-group col-7">
+                  <label for="className" class="col-12 col-form-label">Giáo viên:</label>
+                  <div class="col-12">
+                    <input disabled id="className" class="form-control" type="text" v-model="selectedClass.teacherName">
+                  </div>
+                </div>
+                <div class="form-group col-7">
+                  <label for="className" class="col-12 col-form-label">Lớp học:</label>
+                  <div class="col-12">
+                    <input disabled id="className" class="form-control" type="text" v-model="selectedClass.className">
+                  </div>
+                </div>
+                <div class="form-group col-7">
+                  <label for="className" class="col-12 col-form-label">Môn học:</label>
+                  <div class="col-12">
+                    <input disabled id="className" class="form-control" type="text" v-model="selectedClass.subjectName">
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="col-md-6">
+              <canvas id="examScoreChart" width="300" height="250"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row">
+            <data-table :config="examScoreTableConfig"></data-table>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- class detail  -->
@@ -213,7 +213,7 @@ import { getAllClassDocument, downloadFile } from '@/utils/document-api'
 import { getAllSchedule } from '@/utils/class-schedule-api'
 import { getUserInfo } from '../utils/user-api'
 import { fetchStudentAttendanceResult } from '../utils/class-attendance-api'
-import {fetchStudentExamResult} from '../utils/exam-score-api'
+import { fetchStudentExamResult } from '../utils/exam-score-api'
 import moment from 'moment'
 import Chart from 'chart.js/auto'
 export default {
@@ -787,7 +787,7 @@ export default {
         alert('Không tìm thấy thông tin')
       })
     },
-    renderExamScoreChart() {
+    renderExamScoreChartOld() {
       const ctx = document.getElementById('examScoreChart').getContext('2d');
       if (this.examScoreChart) {
         this.examScoreChart.destroy();
@@ -813,6 +813,42 @@ export default {
         }
       });
     },
+    renderExamScoreChart() {
+      const ctx = document.getElementById('examScoreChart').getContext('2d');
+
+      // Destroy existing chart if it exists
+      if (this.examScoreChart) {
+        this.examScoreChart.destroy();
+      }
+
+      // Create new line chart
+      this.examScoreChart = new Chart(ctx, {
+        type: 'line', // Change type to line
+        data: {
+          labels: this.examScoreData.map(score => score.examName),
+          datasets: [{
+            label: 'Điểm số',
+            data: this.examScoreData.map(score => score.score),
+            fill: false, // Disable fill for line chart
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+            pointBackgroundColor: 'rgba(54, 162, 235, 1)', // Optional: Customize point color
+            pointBorderColor: 'rgba(54, 162, 235, 1)', // Optional: Customize point border color
+            pointRadius: 5, // Optional: Customize point radius
+            pointHoverRadius: 7, // Optional: Customize point hover radius
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              suggestedMax: 10
+            }
+          }
+        }
+      });
+    },
+
     getUserInfo() {
       getUserInfo().then((response) => {
         this.userRole = response.role

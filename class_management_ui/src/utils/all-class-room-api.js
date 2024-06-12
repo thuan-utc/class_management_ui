@@ -3,7 +3,9 @@ import { getAccessToken } from './auth-api'
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`
 
-export { getAllClassroom, createNewClass, search, uploadListStudent, getClassDetail, searchClassForStudent }
+export { getAllClassroom, createNewClass, search,
+   uploadListStudent, getClassDetail, searchClassForStudent,
+    updateClassDetail }
 
 function getAllClassroom() {
   const url = `${BASE_URL}/classroom`
@@ -81,6 +83,19 @@ function getClassDetail(classId) {
   const url = `${BASE_URL}/classroom/detail?classId=${classId}`
   return axios.get(
     url,
+    {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`
+      }
+    }
+  ).then(response => response.data)
+}
+
+function updateClassDetail(request) {
+  const url = `${BASE_URL}/classroom`
+  return axios.put(
+    url,
+    request,
     {
       headers: {
         Authorization: `Bearer ${getAccessToken()}`

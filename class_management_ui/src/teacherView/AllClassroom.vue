@@ -80,24 +80,57 @@
         </div>
         <div class="card-body">
           <div class="form-group row">
-            <label for="className" class="col-sm-2 col-form-label">Tên lớp:</label>
-            <div class="col-sm-3">
-              <input id="className" class="form-control" type="text" v-model="selectedClass.className">
+            <div class="col-5">
+              <div class="form-group row justify-content-around">
+                <div class="form-group row col-12"><label for="className" class="col-sm-2 col-form-label">
+                    Tên lớp:</label>
+                  <div class="col-sm-6">
+                    <input id="className" class="form-control" type="text" v-model="selectedClass.className"
+                      :disabled="!editable">
+                  </div>
+                </div>
+                <div class="form-group row col-12">
+                  <label for="createdDate" class="col-sm-2 col-form-label">Ngày tạo:</label>
+                  <div class="col-sm-6">
+                    <input disabled id="createdDate" class="form-control" type="text" v-model="formattedDate">
+                  </div>
+                </div>
+              </div>
             </div>
-
-            <label for="createdDate" class="col-sm-2 col-form-label">Ngày tạo:</label>
-            <div class="col-sm-3">
-              <input disabled id="createdDate" class="form-control" type="text" v-model="formattedDate">
+            <div class="col-5">
+              <div class="form-group row justify-content-around">
+                <div class="form-group row col-12">
+                  <label for="subjectName" class="col-sm-2 col-form-label">Tên môn:</label>
+                  <div class="col-sm-6">
+                    <input id="subjectName" class="form-control" type="text" v-model="selectedClass.subjectName"
+                      :disabled="!editable">
+                  </div>
+                </div>
+                <div class="form-group row col-12">
+                  <label for="note" class="col-sm-2 col-form-label">Ghi chú:</label>
+                  <div class="col-sm-6">
+                    <textarea id="note" class="form-control" v-model="selectedClass.note"
+                      :disabled="!editable"></textarea>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="form-group row">
-            <label for="subjectName" class="col-sm-2 col-form-label">Tên môn:</label>
-            <div class="col-sm-3">
-              <input id="subjectName" class="form-control" type="text" v-model="selectedClass.subjectName">
-            </div>
-            <label for="note" class="col-sm-2 col-form-label">Ghi chú:</label>
-            <div class="col-sm-3">
-              <textarea id="note" class="form-control" v-model="selectedClass.note"></textarea>
+            <div class="col-2">
+              <div class="form-group row justify-content-around">
+                <div class="form-group row col-12" v-if="!editable">
+                  <button class="btn btn-info" @click="toggleEdit">
+                    <i class="fa fas fa-pencil-alt"></i>
+                  </button>
+                </div>
+                <div v-if="editable">
+                  <button class="btn btn-success mr-2" @click="saveChanges">
+                    <i class="fa fas fa-check"></i> Lưu
+                  </button>
+                  <button class="btn btn-danger" @click="cancelChanges">
+                    <i class="fa fas fa-times"></i> Hủy
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -115,7 +148,7 @@
             <button class="btn btn-info btn-sm mr-1" type="button" @click="showModalAddListStudent()">
               Tải lên danh sách
             </button>
-            <button class="btn btn-success btn-sm" type="button" @click="backToList()">
+            <button class="btn btn-success btn-sm" type="button" @click="downloadListStudent()">
               Tải xuống
             </button>
           </div>
@@ -227,46 +260,63 @@
           <div class="modal-body">
             <form>
               <div class="form-group row">
-                <label class="col-md-4 col-form-label">Tên lớp</label>
+                <label class="col-md-4 col-form-label">Tên họ:</label>
                 <div class="col-md-8">
                   <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
-                    v-model="newClass.className">
+                    v-model="newStudent.firstName">
                   <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Tên đệm:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
+                    v-model="newStudent.surname">
+                  <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Tên:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
+                    v-model="newStudent.lastName">
+                  <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Email:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="email" name="text-input"
+                    v-model="newStudent.email">
+                  <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Điện thoại:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
+                    v-model="newStudent.phone">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Địa chỉ:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
+                    v-model="newStudent.address">
                 </div>
               </div>
 
               <div class="form-group row">
-                <label class="col-md-4 col-form-label">Tên môn học</label>
+                <label class="col-md-4 col-form-label">Ngày sinh</label>
                 <div class="col-md-8">
-                  <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
-                    v-model="newClass.subjectName">
-                  <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
+                  <input type='date' class='form-control' v-model='newStudent.dob'>
                 </div>
               </div>
-
-              <div class="form-group row">
-                <label class="col-md-4 col-form-label">Ghi chú</label>
-                <div class="col-md-8">
-                  <textarea rows="1" maxlength="600" v-model="newClass.note"> </textarea>
-                  <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
-                </div>
-              </div>
-
-              <div class="form-group row align-items-center">
-                <label class="col-md-4 col-form-label">Danh sách học viên</label>
-                <div class="col-md-8">
-                  <em><a title="mau_danh_sach_hoc_vien.xlsx" href="#" rel="nofollow"
-                      @click="downloadFile('mau_danh_sach_hoc_vien.xlsx')">
-                      File mẫu</a></em>
-                </div>
-              </div>
-
-              <p>*Thêm danhh sách học viên và lịch học ở chi tiết lớp học sau khi khởi tạo thông tin cơ bản.</p>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-            <button type="button" class="btn btn-primary" @click="addStduent">Tạo</button>
+            <button type="button" class="btn btn-primary" @click="addStudent">Thêm</button>
           </div>
         </div>
       </div>
@@ -442,11 +492,11 @@
 
 <script>
 import DataTable from '@/common/DataTable.vue'
-import { createNewClass, search, getClassDetail, uploadListStudent } from '../utils/all-class-room-api'
+import { createNewClass, search, getClassDetail, uploadListStudent, updateClassDetail } from '../utils/all-class-room-api'
 import { downloadSample } from '../utils/file-api.js'
-import { getAllStudent } from '../utils/student-api'
-import { getAllClassDocument, uploadDocument } from '@/utils/document-api'
-import { getAllSchedule, createClassSchedule } from '@/utils/class-schedule-api'
+import { getAllStudent, addStudent, downloadListStudent } from '../utils/student-api'
+import { getAllClassDocument, uploadDocument, downloadFile, deleteDocument } from '@/utils/document-api'
+import { getAllSchedule, createClassSchedule, deleteSchedule } from '@/utils/class-schedule-api'
 import moment from 'moment'
 import Notification from '@/common/Notification.vue'
 export default {
@@ -460,7 +510,7 @@ export default {
       isLoading: false,
       isProcessing: false,
       isPageList: true,
-      showFilter: true,
+      editable: false,
       tableConfig: null,
       newClass: {
         className: '',
@@ -491,6 +541,15 @@ export default {
         dayInWeek: null,
         periodInDay: null,
         classId: null
+      },
+      newStudent: {
+        firstName: null,
+        surname: null,
+        lastName: null,
+        email: null,
+        phone: null,
+        address: null,
+        dob: null
       }
     }
   },
@@ -803,6 +862,13 @@ export default {
       }
       this.selectedClass.scheduleTalbeConfig = {
         id: 'scheduleTable',
+        events: [
+        {
+            event: 'click',
+            selector: '.btn-delete-schedule',
+            handler: this.deleteSchedule
+          }
+        ],
         datatable: {
           order: [[1, 'asc']],
           searching: false,
@@ -871,7 +937,7 @@ export default {
               sTitle: 'Xóa',
               mData: 'id',
               mRender: function (data, tupe, full) {
-                return `<button class="btn btn-outline-danger btn-sm btn-class-detail mr-2">
+                return `<button class="btn btn-outline-danger btn-sm btn-delete-schedule mr-2">
                           <span class="icon text-gray-600"><i class="fas fas fa-trash-alt"></i></span> </button>`
               }
             }
@@ -881,6 +947,18 @@ export default {
       }
       this.selectedClass.documentTableConfig = {
         id: 'documentTable',
+        events: [
+          {
+            event: 'click',
+            selector: '.btn-download-file',
+            handler: this.downloadFile
+          },
+          {
+            event: 'click',
+            selector: '.btn-delete-document',
+            handler: this.deleteDocument
+          }
+        ],
         datatable: {
           order: [[0, 'desc']],
           searching: false,
@@ -909,7 +987,7 @@ export default {
               sTitle: 'Tải xuống',
               mData: 'id',
               mRender: function (data, tupe, full) {
-                return `<button class="btn btn-outline-success btn-sm btn-class-detail mr-2">
+                return `<button class="btn btn-outline-success btn-sm btn-download-file mr-2">
                           <span class="icon text-gray-600"><i class="fa fas fa-download"></i></span></button>`
               }
             },
@@ -917,7 +995,7 @@ export default {
               sTitle: 'Xóa',
               mData: 'id',
               mRender: function (data, tupe, full) {
-                return `<button class="btn btn-outline-danger btn-sm btn-class-detail mr-2">
+                return `<button class="btn btn-outline-danger btn-sm btn-delete-document mr-2">
                           <span class="icon text-gray-600"><i class="fas fas fa-trash-alt"></i></span> </button>`
               }
             }
@@ -1025,6 +1103,74 @@ export default {
       } else {
         alert("Có lỗi xảy ra!")
       }
+    },
+    toggleEdit() {
+      this.editable = !this.editable;
+    },
+    saveChanges() {
+      updateClassDetail(this.selectedClass).then((response) => {
+        this.selectedClass = response
+        this.isPageList = false
+        this.initClassDetail()
+      }).catch((error) => {
+        console.log("Error")
+        alert("Lưu thất bại")
+      })
+      this.editable = false;
+    },
+    cancelChanges() {
+      getClassDetail(this.selectedClass.id).then((response) => {
+        this.selectedClass = response
+        this.isPageList = false
+        this.initClassDetail()
+
+      }).catch((error) => {
+        console.log("Error fecth class detail " + error)
+        alert('Không tìm thấy thông tin')
+      })
+      this.editable = false;
+    },
+    addStudent() {
+      addStudent(this.selectedClass.id, this.newStudent).then((reponse) => {
+        alert("Thêm thành công!")
+        $('#' + this.studentTableConfig.id).DataTable().draw()
+      }).catch((error) => {
+        console.log(error)
+        alert("Thêm thất bại!")
+      })
+    },
+    downloadListStudent() {
+      downloadListStudent(this.selectedClass.id).catch((error) => {
+        console.log(error)
+        alert("Tải xuống thất bại!")
+      })
+    },
+    downloadFile(e) {
+      let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+      downloadFile(currentRow.id).catch((error) => {
+        console.log(error)
+        alert("Không thể tải file!")
+      })
+    },
+    deleteDocument(e) {
+      let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+      deleteDocument(currentRow.id).then((response) =>{
+        alert("Xóa thành công")
+        $('#' + this.selectedClass.documentTableConfig.id).DataTable().draw()
+      }).catch((error) => {
+        console.log(error)
+        alert("Không thể xóa file!")
+      })
+    },
+    deleteSchedule(e) {
+      let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+      deleteSchedule(currentRow.id).then((response) =>{
+        alert("Xóa thành công")
+        $('#' + this.selectedClass.scheduleTalbeConfig.id).DataTable().draw()
+      }).catch((error) => {
+        console.log(error)
+        alert("Không thể xóa lịch học!")
+      })
     }
   },
   mounted() {
@@ -1033,3 +1179,4 @@ export default {
   }
 }
 </script>
+<style scoped></style>

@@ -3,7 +3,7 @@ import { getAccessToken } from './auth-api'
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`
 
-export { getAllSchedule, createClassSchedule, searchSchedule }
+export { getAllSchedule, createClassSchedule, searchSchedule, deleteSchedule }
 
 function searchSchedule(params) {
   const url = `${BASE_URL}/class-schedule/search`
@@ -44,4 +44,18 @@ function createClassSchedule(request) {
         Authorization: `Bearer ${getAccessToken()}`
       }
     }).then(response => response.data)
+}
+
+function deleteSchedule(scheduleId) {
+  const url = `${BASE_URL}/class-schedule/delete/${scheduleId}`
+  return axios.put(
+    url,
+    {},
+    {
+      headers: { Authorization: `Bearer ${getAccessToken()}` }
+    }
+  ).then((response) => {
+    return response.data;
+  })
+
 }
