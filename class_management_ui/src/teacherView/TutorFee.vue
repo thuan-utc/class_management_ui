@@ -99,7 +99,7 @@
                         <button class="btn btn-sm btn-primary mr-3" @click="sendEmail">
                             <i class="fa fa-envelope"></i> Gửi Email
                         </button>
-                        <button class="btn btn-sm btn-success" @click="downloadFile">
+                        <button class="btn btn-sm btn-success" @click="downloadTutorFeeResult">
                             <i class="fa fa-download"></i> Tải Xuống (XLSX)
                         </button>
                     </div>
@@ -114,7 +114,7 @@
 
 <script>
 import moment from 'moment'
-import { calculateTutorFee } from '../utils/tutor-fee-api'
+import { calculateTutorFee, downloadTutorFeeResult, sendTutorFeeNotification } from '../utils/tutor-fee-api'
 import { getClassDetail } from '../utils/all-class-room-api.js'
 import DataTable from '@/common/DataTable.vue'
 
@@ -247,6 +247,20 @@ export default {
             } else {
                 $('#' + this.tutorFeeTable.id).DataTable().draw()
             }
+        },
+        downloadTutorFeeResult() {
+            downloadTutorFeeResult(this.classId, this.month, this.year, this.classSessionPrice).catch((error) =>{
+                alert("Không thể tải kết quả")
+                console.log(error)
+            })
+        },
+        sendEmail() {
+            sendTutorFeeNotification(this.classId, this.month, this.year, this.classSessionPrice).then((response) =>{
+                alert("Đã gửi");
+            }).catch((error) =>{
+                alert("Lỗi")
+                console.log(error)
+            })
         }
     },
     mounted() {

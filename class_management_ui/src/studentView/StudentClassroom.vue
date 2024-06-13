@@ -213,7 +213,7 @@ import { getAllClassDocument, downloadFile } from '@/utils/document-api'
 import { getAllSchedule } from '@/utils/class-schedule-api'
 import { getUserInfo } from '../utils/user-api'
 import { fetchStudentAttendanceResult } from '../utils/class-attendance-api'
-import { fetchStudentExamResult } from '../utils/exam-score-api'
+import { fetchStudentExamResult, downloadExamResult } from '../utils/exam-score-api'
 import moment from 'moment'
 import Chart from 'chart.js/auto'
 export default {

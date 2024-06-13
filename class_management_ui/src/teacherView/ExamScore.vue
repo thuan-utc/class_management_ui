@@ -132,7 +132,11 @@
 <script>
 import DataTable from '@/common/DataTable.vue'
 import { getClassDetail } from '../utils/all-class-room-api'
-import { fetchClassExamScore, saveExamScoreResult, createNewExam, fetchClassExam } from '@/utils/exam-score-api.js'
+import {
+    fetchClassExamScore, saveExamScoreResult, createNewExam, 
+    fetchClassExam,
+    downloadExamResult
+} from '@/utils/exam-score-api.js'
 import moment from 'moment'
 import Chart from 'chart.js/auto'
 export default {
@@ -328,10 +332,10 @@ export default {
                 alert("", "Lưu thất bại!")
             })
             if (this.examScoreTableConfig === null) {
-                    this.initExamScoreTable()
-                } else {
-                    $('#' + this.examScoreTableConfig.id).DataTable().draw()
-                }
+                this.initExamScoreTable()
+            } else {
+                $('#' + this.examScoreTableConfig.id).DataTable().draw()
+            }
         },
         attachInputEventListeners() {
             // const inputs = this.$el.querySelectorAll('.score-input');
@@ -436,7 +440,10 @@ export default {
             });
         },
         downloadListExamScore() {
-
+            downloadExamResult(this.selectedClass.id).catch((error) => {
+                alert("Không thể tải file!")
+                console.log(error)
+            })
         }
     },
     mounted() {
