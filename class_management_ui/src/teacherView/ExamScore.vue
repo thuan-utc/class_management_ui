@@ -70,10 +70,18 @@
         </div>
 
         <div class="card shadow mb-4" v-if="examScoreTableConfig !== null">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-12">
+                        <canvas id="examScoreChart" width="300" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+
             <div class="card-body">
                 <div v-if="selectedExam !== null" class="col-12">
                     <div class="form-group row">
-                        <label for="className" class="col-sm-1 col-form-label">Tên bài:</label>
+                        <label for="className" class="col-sm-2 col-form-label">Tên bài kiểm tra:</label>
                         <div class="col-sm-3">
                             <input disabled id="className" class="form-control" type="text" v-model="selectedExam.name">
                         </div>
@@ -90,12 +98,43 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Add new exam-->
+    <div class="modal fade" id="add-exam-modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchCriteriaCard">Thêm đầu điểm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group row">
+                            <label class="col-md-4 col-form-label">Tên điểm:</label>
+                            <div class="col-md-8">
+                                <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
+                                    v-model="newExam.examName">
+                                <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" @click="addNewExam">Thêm</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 <script>
 import DataTable from '@/common/DataTable.vue'
 import { getClassDetail } from '../utils/all-class-room-api'
 import { fetchClassExamScore, saveExamScoreResult, createNewExam, fetchClassExam } from '@/utils/exam-score-api.js'
 import moment from 'moment'
+import Chart from 'chart.js/auto'
 export default {
     name: 'exam-score',
     components: {
@@ -109,7 +148,13 @@ export default {
             examTableConfig: null,
             examScoreTableConfig: null,
             selectedClass: null,
-            selectedExam: null
+            selectedExam: null,
+            newExam: {
+                examName: '',
+                classId: null
+            },
+            examScoreChart: null,
+            examScoreChartData: null
         }
     },
     computed: {
@@ -245,9 +290,10 @@ export default {
                 data.data = response.content
                 fnCallback(data)
                 this.attachInputEventListeners()
+                this.updateExamScoreBarChart(response.content)
             }).catch((error) => {
                 console.log("Error fecth class detail " + error)
-                alert('Không tìm thấy thông tin')
+                alert('Không tìm thấy thông tin' + error)
             })
         },
         editExamScore(e) {
@@ -281,13 +327,24 @@ export default {
                 console.log(error)
                 alert("", "Lưu thất bại!")
             })
-
+            if (this.examScoreTableConfig === null) {
+                    this.initExamScoreTable()
+                } else {
+                    $('#' + this.examScoreTableConfig.id).DataTable().draw()
+                }
         },
         attachInputEventListeners() {
-            const inputs = this.$el.querySelectorAll('.score-input');
-            inputs.forEach(input => {
-                input.removeEventListener('input', this.handleInputChange);
-                input.addEventListener('input', this.handleInputChange);
+            // const inputs = this.$el.querySelectorAll('.score-input');
+            // inputs.forEach(input => {
+            //     input.removeEventListener('input', this.handleInputChange);
+            //     input.addEventListener('input', this.handleInputChange);
+            // });
+            this.$nextTick(() => {
+                const inputs = document.querySelectorAll('.score-input');
+                inputs.forEach(input => {
+                    input.removeEventListener('input', this.handleInputChange);
+                    input.addEventListener('input', this.handleInputChange);
+                });
             });
         },
         handleInputChange(e) {
@@ -308,7 +365,75 @@ export default {
             }
         },
         createNewExam() {
+            this.newExam = {
+                examName: '',
+                classId: this.selectedClass.id
+            };
 
+            // Show the modal for adding a new exam
+            $('#add-exam-modal').modal('show');
+        },
+        addNewExam() {
+            createNewExam(this.newExam).then((response) => {
+                $('#add-exam-modal').modal('hide');
+                alert("Thêm đầu điểm thành công!");
+                if (this.examTableConfig === null) {
+                    this.initExamTable()
+                } else {
+                    $('#' + this.examTableConfig.id).DataTable().draw()
+                }
+            }).catch((error) => {
+                console.error('Error adding new exam:', error);
+                alert("Thêm đầu điểm thất bại!");
+            });
+        },
+        updateExamScoreBarChart(examScoreData) {
+            // Initialize count array for scores 1-10
+            const scoreCounts = new Array(10).fill(0);
+
+            // Count the occurrences of each score
+            examScoreData.forEach(student => {
+                if (student.score !== null && student.score >= 1 && student.score <= 10) {
+                    const roundedScore = Math.round(student.score);
+                    scoreCounts[roundedScore - 1]++;
+                }
+            });
+
+            // Labels for the chart (scores 1-10)
+            const labels = Array.from({ length: 10 }, (_, i) => i + 1);
+
+            // Destroy existing chart if it exists
+            if (this.examScoreChart) {
+                this.examScoreChart.destroy();
+            }
+
+            // Get the canvas context
+            const ctx = document.getElementById('examScoreChart').getContext('2d');
+
+            // Initialize new chart instance as Bar chart
+            this.examScoreChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Số lượng sinh viên',
+                        data: scoreCounts,
+                        backgroundColor: '#4CAF50', // Green color for bars
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1, // Adjust as needed
+                            },
+                        },
+                    },
+                },
+            });
         },
         downloadListExamScore() {
 
