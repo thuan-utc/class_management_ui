@@ -57,7 +57,7 @@
         <div class="card shadow mb-4" v-if="scheduleTableConfig !== null">
             <div class="card-body">
                 <div class="row d-flex justify-content-end mb-3">
-                    <button class="btn btn-success btn-sm" type="button">
+                    <button class="btn btn-success btn-sm" type="button" @click="downloadAttendanceResult">
                         <i class="fa fas fa-download"></i>
                         Kết quả điểm danh
                     </button>
@@ -110,6 +110,10 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col d-flex justify-content-end">
+                        <button v-if="editAble" class="btn btn-info btn mr-2" type="button" @click="attendAll">
+                            <i class="fa fas fa-check-square"></i>
+                            Điểm danh tất cả
+                        </button>
                         <button v-if="editAble" class="btn btn-success btn mr-2" type="button" @click="submitResult">
                             <i class="fa fas fa-save"></i>
                             Lưu
@@ -121,7 +125,7 @@
                         </button>
                         <button v-else="!editAble" class="btn btn-secondary btn mr-2" type="button"
                             @click="this.editAble = false">
-                            <i class="fa fas fa-cancel"></i>
+                            <i class="fa fas fa-times"></i>
                             Hủy
                         </button>
                     </div>
@@ -139,7 +143,7 @@
 import { searchSchedule } from '../utils/class-schedule-api.js'
 import DataTable from '@/common/DataTable.vue'
 import { getClassDetail } from '../utils/all-class-room-api.js'
-import { fetchClassAttendance, saveClassAttendanceResult } from '@/utils/class-attendance-api.js'
+import { fetchClassAttendance, saveClassAttendanceResult, downloadAttendanceResult } from '@/utils/class-attendance-api.js'
 import Chart from 'chart.js/auto'
 
 import moment from 'moment'
@@ -393,7 +397,6 @@ export default {
                     fnServerData: this.fetchClassAttendance
                 }
             }
-
         },
         fetchClassAttendance(sSource, aoData, fnCallback) {
             fetchClassAttendance(this.scheduleId).then((response) => {
@@ -416,8 +419,14 @@ export default {
             this.selectedSchedule = currentRow
             if (this.classAttendanceTableConfig === null) {
                 this.initClassAttendanceTable()
+                if (this.editAble) {
+                    this.editAble = false
+                }
             } else {
                 $('#' + this.classAttendanceTableConfig.id).DataTable().draw()
+                if (this.editAble) {
+                    this.editAble = false
+                }
             }
         },
         submitResult() {
@@ -514,6 +523,38 @@ export default {
         },
         formateDate(date) {
             return moment(date).format("DD/MM/YYYY")
+        },
+        downloadAttendanceResult() {
+            downloadAttendanceResult(this.classId).catch((error) => {
+                console.log(error)
+                alert("Không thể tải file!")
+            })
+        },
+        attendAll() {
+            // Check all checkboxes in the table
+            $('#' + this.classAttendanceTableConfig.id + ' .attend-checkbox').each((index, checkbox) => {
+                checkbox.checked = true;
+            });
+
+            // Update the underlying data
+            let rows = $('#' + this.classAttendanceTableConfig.id).DataTable().rows().nodes();
+            rows.each((index, row) => {
+                let rowData = $('#' + this.classAttendanceTableConfig.id).DataTable().row(row).data();
+                rowData.isAttended = true;
+            });
+
+            // Optional: Redraw the table to reflect changes
+            // $('#' + this.classAttendanceTableConfig.id).DataTable().draw();
+            const updatedAttendanceData = this.attendanceChartData.map((data) => {
+                return {
+                        ...data,
+                        isAttended: true
+                    };
+            });
+
+            this.attendanceChartData = updatedAttendanceData;
+            this.updateAttendanceChart(this.attendanceChartData)
+
         }
     },
     mounted() {

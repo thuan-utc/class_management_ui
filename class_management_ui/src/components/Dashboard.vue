@@ -124,7 +124,9 @@ export default {
                                 }
                             }
                         },
-                        { sTitle: 'Thứ Hai', mData: 'mondayClass' },
+                        {
+                            sTitle: 'Thứ Hai', mData: 'mondayClass'
+                        },
                         { sTitle: 'Thứ Ba', mData: 'tuesdayClass' },
                         { sTitle: 'Thứ Tư', mData: 'wednesdayClass' },
                         { sTitle: 'Thứ Năm', mData: 'thursdayClass' },

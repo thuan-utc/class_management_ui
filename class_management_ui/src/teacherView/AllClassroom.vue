@@ -487,6 +487,39 @@
         data-rule-required='true' @change="handleFileChange('documentFile')">
     </div>
 
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            Xác nhận xóa tập tin {{ beingDeletedDocument !== null ? beingDeletedDocument.documentName : '' }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn" @click="confirmDeleteDocument">Xóa</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelDeleteDocument">Hủy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+     <!-- Confirmation Modal -->
+     <div class="modal fade" id="deleteScheduleConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            Xác nhận xóa lịch học {{ beingDeleteSchedule !== null ? beingDeleteSchedule.day : '' }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn" @click="confirmDeleteSchedule">Xóa</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelDeleteSchedule">Hủy</button>
+          </div>
+        </div>P
+      </div>
+    </div>
+
+
   </div>
 </template>
 
@@ -550,7 +583,9 @@ export default {
         phone: null,
         address: null,
         dob: null
-      }
+      },
+      beingDeletedDocument: null,
+      beingDeleteSchedule: null
     }
   },
   computed: {
@@ -863,7 +898,7 @@ export default {
       this.selectedClass.scheduleTalbeConfig = {
         id: 'scheduleTable',
         events: [
-        {
+          {
             event: 'click',
             selector: '.btn-delete-schedule',
             handler: this.deleteSchedule
@@ -1154,7 +1189,12 @@ export default {
     },
     deleteDocument(e) {
       let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
-      deleteDocument(currentRow.id).then((response) =>{
+      this.beingDeletedDocument = currentRow
+      $('#deleteConfirmationModal').modal('show')
+    },
+    confirmDeleteDocument(e) {
+      deleteDocument(this.beingDeletedDocument.id).then((response) => {
+        $('#deleteConfirmationModal').modal('hide');
         alert("Xóa thành công")
         $('#' + this.selectedClass.documentTableConfig.id).DataTable().draw()
       }).catch((error) => {
@@ -1162,16 +1202,28 @@ export default {
         alert("Không thể xóa file!")
       })
     },
+    cancelDeleteDocument(){
+      this.beingDeletedDocument = null
+      $('#deleteConfirmationModal').modal('hide');
+    },
     deleteSchedule(e) {
       let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
-      deleteSchedule(currentRow.id).then((response) =>{
+      this.beingDeleteSchedule = currentRow
+      $('#deleteScheduleConfirmationModal').modal('show');
+    },
+    confirmDeleteSchedule() {
+      deleteSchedule(this.beingDeleteSchedule.id).then((response) => {
+        $('#deleteScheduleConfirmationModal').modal('hide');
         alert("Xóa thành công")
         $('#' + this.selectedClass.scheduleTalbeConfig.id).DataTable().draw()
       }).catch((error) => {
         console.log(error)
         alert("Không thể xóa lịch học!")
-      })
-    }
+      })    },
+    cancelDeleteSchedule(){
+      this.beingDeleteSchedule = null
+      $('#deleteScheduleConfirmationModal').modal('hide');
+    },
   },
   mounted() {
     this.initTable()
