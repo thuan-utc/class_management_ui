@@ -231,7 +231,7 @@
                 <label class="col-md-4 col-form-label">Danh sách học viên</label>
                 <div class="col-md-8">
                   <em><a title="mau_danh_sach_hoc_vien.xlsx" href="#" rel="nofollow"
-                      @click="downloadFile('mau_danh_sach_hoc_vien.xlsx')">
+                      @click="downloadFileSample('mau_danh_sach_hoc_vien.xlsx')">
                       File mẫu</a></em>
                 </div>
               </div>
@@ -344,7 +344,7 @@
                 </div>
                 <div class="col-md-4">
                   <em><a title="mau_danh_sach_hoc_vien.xlsx" href="#" rel="nofollow"
-                      @click="downloadFile('mau_danh_sach_hoc_vien.xlsx')">File mẫu</a></em>
+                      @click="downloadFileSample('mau_danh_sach_hoc_vien.xlsx')">File mẫu</a></em>
                 </div>
               </div>
 
@@ -496,26 +496,123 @@
             Xác nhận xóa tập tin {{ beingDeletedDocument !== null ? beingDeletedDocument.documentName : '' }}
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" id="confirmDeleteBtn" @click="confirmDeleteDocument">Xóa</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelDeleteDocument">Hủy</button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn"
+              @click="confirmDeleteDocument">Xóa</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+              @click="cancelDeleteDocument">Hủy</button>
           </div>
         </div>
       </div>
     </div>
 
-     <!-- Confirmation Modal -->
-     <div class="modal fade" id="deleteScheduleConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel"
-      aria-hidden="true">
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="deleteScheduleConfirmationModal" tabindex="-1"
+      aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-body">
             Xác nhận xóa lịch học {{ beingDeleteSchedule !== null ? beingDeleteSchedule.day : '' }}
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" id="confirmDeleteBtn" @click="confirmDeleteSchedule">Xóa</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="cancelDeleteSchedule">Hủy</button>
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn"
+              @click="confirmDeleteSchedule">Xóa</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+              @click="cancelDeleteSchedule">Hủy</button>
           </div>
         </div>P
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="deleteStudentModal" tabindex="-1"
+      aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            Xác nhận xóa học viên với email {{ beingDeleteStudent !== null ? beingDeleteStudent.email : '' }}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="confirmDeleteBtn"
+              @click="confirmDeleteStudent">Xóa</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+              @click="cancelDeleteStudent">Hủy</button>
+          </div>
+        </div>P
+      </div>
+    </div>
+
+        <!-- Modal edit student-->
+        <div class="modal fade" id="edit-student-modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="searchCriteriaCard">Sửa thông tin học viên</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Tên họ:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
+                    v-model="beingUpdatedStudent.firstName">
+                  <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Tên đệm:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
+                    v-model="beingUpdatedStudent.surname">
+                  <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Tên:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
+                    v-model="beingUpdatedStudent.lastName">
+                  <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Email:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="email" name="text-input"
+                    v-model="beingUpdatedStudent.email">
+                  <!-- <h6 v-show="true" class="missing-input">This field is required</h6> -->
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Điện thoại:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
+                    v-model="beingUpdatedStudent.phone">
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Địa chỉ:</label>
+                <div class="col-md-8">
+                  <input :disabled="isProcessing" class="form-control" type="text" name="text-input"
+                    v-model="beingUpdatedStudent.address">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-md-4 col-form-label">Ngày sinh</label>
+                <div class="col-md-8">
+                  <input type='date' class='form-control' v-model='beingUpdatedStudent.dob'>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+            <button type="button" class="btn btn-primary" @click="saveStudent">Lưu</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -527,7 +624,7 @@
 import DataTable from '@/common/DataTable.vue'
 import { createNewClass, search, getClassDetail, uploadListStudent, updateClassDetail } from '../utils/all-class-room-api'
 import { downloadSample } from '../utils/file-api.js'
-import { getAllStudent, addStudent, downloadListStudent } from '../utils/student-api'
+import { getAllStudent, addStudent, downloadListStudent, deleteStudent, saveStudent } from '../utils/student-api'
 import { getAllClassDocument, uploadDocument, downloadFile, deleteDocument } from '@/utils/document-api'
 import { getAllSchedule, createClassSchedule, deleteSchedule } from '@/utils/class-schedule-api'
 import moment from 'moment'
@@ -585,7 +682,18 @@ export default {
         dob: null
       },
       beingDeletedDocument: null,
-      beingDeleteSchedule: null
+      beingDeleteSchedule: null,
+      beingDeleteStudent: null,
+      beingUpdatedStudent: {
+        firstName: null,
+        surname: null,
+        lastName: null,
+        email: null,
+        phone: null,
+        address: null,
+        dob: null,
+        id: null
+      }
     }
   },
   computed: {
@@ -750,7 +858,7 @@ export default {
       this.$refs.documentFile.files = null
       $('#browseDocumentFile').click()
     },
-    downloadFile(fileName) {
+    downloadFileSample(fileName) {
       downloadSample(fileName).catch((error) => {
         console.log(error)
         alert("Không thể tải file!")
@@ -855,6 +963,18 @@ export default {
     initClassDetail() {
       this.selectedClass.studentTableConfig = {
         id: 'studentTable',
+        events: [
+          {
+            event: 'click',
+            selector: '.btn-edit-student',
+            handler: this.editStudent
+          },
+          {
+            event: 'click',
+            selector: '.btn-delete-student',
+            handler: this.deleteStudent
+          }
+        ],
         datatable: {
           order: [[5, 'desc']],
           searching: false,
@@ -886,8 +1006,17 @@ export default {
               sTitle: "Sửa",
               mData: "id",
               mRender: function (data, type, full) {
-                return `<button class="btn btn-outline-warning btn-sm btn-class-detail mr-2">
+                return `<button class="btn btn-outline-warning btn-sm btn-edit-student mr-2">
                           <span class="icon text-gray-600"><i class="fas fa-pencil-alt"></i></span>
+                        </button>`
+              }
+            },
+            {
+              sTitle: "Xóa",
+              mData: "id",
+              mRender: function (data, type, full) {
+                return `<button class="btn btn-outline-danger btn-sm btn-delete-student mr-2">
+                          <span class="icon text-gray-600"><i class="fas fa-trash"></i></span>
                         </button>`
               }
             }
@@ -1168,7 +1297,7 @@ export default {
     addStudent() {
       addStudent(this.selectedClass.id, this.newStudent).then((reponse) => {
         alert("Thêm thành công!")
-        $('#' + this.studentTableConfig.id).DataTable().draw()
+        $('#' + this.selectedClass.studentTableConfig.id).DataTable().draw()
       }).catch((error) => {
         console.log(error)
         alert("Thêm thất bại!")
@@ -1202,7 +1331,7 @@ export default {
         alert("Không thể xóa file!")
       })
     },
-    cancelDeleteDocument(){
+    cancelDeleteDocument() {
       this.beingDeletedDocument = null
       $('#deleteConfirmationModal').modal('hide');
     },
@@ -1219,10 +1348,53 @@ export default {
       }).catch((error) => {
         console.log(error)
         alert("Không thể xóa lịch học!")
-      })    },
-    cancelDeleteSchedule(){
+      })
+    },
+    cancelDeleteSchedule() {
       this.beingDeleteSchedule = null
       $('#deleteScheduleConfirmationModal').modal('hide');
+    },
+    editStudent(e) {
+      let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+      this.beingUpdatedStudent = currentRow
+      this.beingUpdatedStudent.id = currentRow.id
+      this.beingUpdatedStudent.firstName = currentRow.firstName
+      this.beingUpdatedStudent.surname = currentRow.surname
+      this.beingUpdatedStudent.lastName = currentRow.lastName
+      this.beingUpdatedStudent.email = currentRow.email
+      this.beingUpdatedStudent.phone = currentRow.phone
+      this.beingUpdatedStudent.address = currentRow.address
+      this.beingUpdatedStudent.dob = currentRow.dob
+      $('#edit-student-modal').modal('show');
+    },
+    saveStudent() {
+      saveStudent(this.beingUpdatedStudent).then((reponse) => {
+        alert("Lưu thành công!")
+        $('#edit-student-modal').modal('hide');
+        $('#' + this.selectedClass.studentTableConfig.id).DataTable().draw()
+      }).catch((error) => {
+        console.log(error)
+        alert("Lưu thất bại!")
+      })
+    },
+    deleteStudent(e) {
+      let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+      this.beingDeleteStudent = currentRow
+      $('#deleteStudentModal').modal('show');
+    },
+    confirmDeleteStudent() {
+      deleteStudent(this.beingDeleteStudent.id).then((response) => {
+        $('#deleteStudentModal').modal('hide');
+        alert("Xóa thành công")
+        $('#' + this.selectedClass.studentTableConfig.id).DataTable().draw()
+      }).catch((error) => {
+        console.log(error)
+        alert("Không thể xóa lịch học!")
+      })
+    },
+    cancelDeleteStudent() {
+      this.beingDeleteStudent = null
+      $('#deleteStudentModal').modal('hide');
     },
   },
   mounted() {

@@ -3,7 +3,7 @@ import { getAccessToken } from './auth-api'
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`
 
-export { getAllStudent, search, addStudent, downloadListStudent }
+export { getAllStudent, search, addStudent, downloadListStudent, deleteStudent, saveStudent }
 
 function getAllStudent(classId) {
   const url = `${BASE_URL}/student?classId=${classId}`
@@ -74,4 +74,32 @@ function downloadListStudent(classId) {
   }).catch((error) => {
     console.error('Error downloading the file', error);
   });
+}
+
+function deleteStudent(studentId) {
+  const url = `${BASE_URL}/student/delete/${studentId}`
+  return axios.put(
+    url,
+    {},
+    {
+      headers: { Authorization: `Bearer ${getAccessToken()}` }
+    }
+  ).then((response) => {
+    return response.data;
+  })
+
+}
+
+
+function saveStudent(beingUpdatedStudent) {
+  const url = `${BASE_URL}/student`
+  return axios.put(
+    url,
+    beingUpdatedStudent,
+    {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`
+      }
+    }
+  ).then(response => response.data)
 }
