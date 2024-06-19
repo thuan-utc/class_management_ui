@@ -140,6 +140,45 @@
         </div>
 
       </div>
+
+      <!-- tutorFee -->
+      <div class="card shadow mb-4" v-if="tutorFeeTableConfig !== null">
+        <div class="card-header py-3 col-12 tutor-fee-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Danh sách học phí</h6>
+          </div>
+        </div>
+
+        <div class="card-header">
+          <form class="row">
+            <div class="form-group col-4">
+              <label for="className" class="col-12 col-form-label">Giáo viên:</label>
+              <div class="col-12">
+                <input disabled id="className" class="form-control" type="text" v-model="selectedClass.teacherName">
+              </div>
+            </div>
+            <div class="form-group col-4">
+              <label for="className" class="col-12 col-form-label">Lớp học:</label>
+              <div class="col-12">
+                <input disabled id="className" class="form-control" type="text" v-model="selectedClass.className">
+              </div>
+            </div>
+            <div class="form-group col-4">
+              <label for="className" class="col-12 col-form-label">Môn học:</label>
+              <div class="col-12">
+                <input disabled id="className" class="form-control" type="text" v-model="selectedClass.subjectName">
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="card-body">
+          <div class="row">
+            <data-table :config="tutorFeeTableConfig"></data-table>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- class detail  -->
@@ -214,6 +253,7 @@ import { getAllSchedule } from '@/utils/class-schedule-api'
 import { getUserInfo } from '../utils/user-api'
 import { fetchStudentAttendanceResult } from '../utils/class-attendance-api'
 import { fetchStudentExamResult, downloadExamResult } from '../utils/exam-score-api'
+import { getStudentTutorFee } from '../utils/tutor-fee-api'
 import moment from 'moment'
 import Chart from 'chart.js/auto'
 export default {
@@ -251,7 +291,8 @@ export default {
       attendanceChartData: null,
       attendanceChart: null,
       examScoreChartData: null,
-      examScoreChart: null
+      examScoreChart: null,
+      tutorFeeTableConfig: null
     }
   },
   computed: {
@@ -278,6 +319,11 @@ export default {
             event: 'click',
             selector: '.btn-show-score-result',
             handler: this.showScoreResult
+          },
+          {
+            event: 'click',
+            selector: '.btn-show-tutor-fee',
+            handler: this.showTutorFee
           }
         ],
         datatable: {
@@ -318,16 +364,16 @@ export default {
             {
               sTitle: 'Xem điểm', mData: 'id',
               mRender: function (data, type, full) {
-                return `<button class="btn btn-outline-secondary btn-sm btn-show-score-result mr-2">
+                return `<button class="btn btn-outline-danger btn-sm btn-show-score-result mr-2">
                             <span class="icon text-gray-600"><i class="fa fa-regular fa-star"></i></i></span>
                           </button>`
               }
             },
             {
-              sTitle: 'Tài liệu', mData: 'id',
+              sTitle: 'Học phí', mData: 'id',
               mRender: function (data, type, full) {
-                return `<button class="btn btn-outline-warning btn-class-detail mr-2">
-                            <span class="icon text-gray-600"><i class="fa fa-solid fa-file"></i></span>
+                return `<button class="btn btn-outline-warning btn-show-tutor-fee mr-2">
+                            <span class="icon text-gray-600"><i class="fa fa-money-bill"></i></span>
                         </button>`
               }
             },
@@ -403,6 +449,7 @@ export default {
       })
     },
     showAttendanceResult(e) {
+      this.resetView()
       let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
       this.examScoreTableConfig = null
       this.selectedClass = currentRow
@@ -414,6 +461,7 @@ export default {
       }
     },
     showScoreResult(e) {
+      this.resetView()
       this.classAttendanceTableConfig = null
       let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
       this.selectedClass = currentRow
@@ -848,7 +896,6 @@ export default {
         }
       });
     },
-
     getUserInfo() {
       getUserInfo().then((response) => {
         this.userRole = response.role
@@ -862,6 +909,114 @@ export default {
       })
 
     },
+    resetView() {
+      this.classAttendanceTableConfig = null
+      this.examScoreTableConfig = null
+      this.tutorFeeTableConfig = null
+    },
+    initTutorFeeTable() {
+      this.tutorFeeTableConfig = {
+        id: 'tutorFeeTable',
+        events: [],
+        datatable: {
+          order: [[5, 'desc']],
+          searching: false,
+          lengthChange: !1,
+          pageLength: 5,
+          select: 0,
+          scrollX: '100px',
+          scrollX: true,
+          bServerSide: true,
+          bProcessing: false,
+          sAjaxSource: '',
+          language: {
+            processing: '<div class="spinner-grow spinner-grow-lg text-primary" aria-hidden="false" aria-label="Loading" role="status"/>'
+          },
+          aoColumns: [
+            { sTitle: 'ID', mData: 'id', bVisible: false },
+            { sTitle: 'Năm', mData: 'year' },
+            { sTitle: 'Tháng', mData: 'month' },
+            { sTitle: 'Số buổi', mData: 'numberOfClassesAttended' },
+            {
+              sTitle: 'Giá tiền 1 buổi', mData: 'lessionPrice',
+              mRender: function (data, type, full) {
+                if (typeof data === 'number') {
+                  // Format the number with commas for thousands separators
+                  return data.toLocaleString('en-US') + ' vnd';
+                } else {
+                  return data;
+                }
+              }
+            },
+            {
+              sTitle: 'Tổng tiền', mData: 'feeAmount',
+              mRender: function (data, type, full) {
+                if (typeof data === 'number') {
+                  // Format the number with commas for thousands separators
+                  return data.toLocaleString('en-US') + ' vnd';
+                } else {
+                  return data;
+                }
+              }
+            },
+            {
+              sTitle: 'Đã đóng', mData: 'feeSubmitted',
+              mRender: function (data, type, full) {
+                if (typeof data === 'number') {
+                  // Format the number with commas for thousands separators
+                  return data.toLocaleString('en-US') + ' vnd';
+                } else {
+                  return data;
+                }
+              }
+            },
+            {
+              sTitle: 'Còn nợ', mData: 'feeNotSubmitted',
+              mRender: function (data, type, full) {
+                if (typeof data === 'number') {
+                  // Format the number with commas for thousands separators
+                  return data.toLocaleString('en-US') + ' vnd';
+                } else {
+                  return data;
+                }
+              }
+            },
+            {
+              sTitle: 'Ngày tạo', mData: 'createdDate',
+              mRender: function (data, type, full) {
+                return data !== null ? moment(data).format('YYYY/MM/DD hh:mm:ss') : ''
+              }
+            }
+          ],
+          fnServerData: this.getTutorFee
+
+        }
+      }
+    },
+    getTutorFee(sSource, aoData, fnCallback) {
+      getStudentTutorFee(this.selectedClass.id).then((response) => {
+        let data = {}
+        data.recordsTotal = response.totalElements
+        data.recordsFiltered = response.totalElements
+        data.data = response.content
+        fnCallback(data)
+      }).catch((error) => {
+        console.log("Error fecth class detail " + error)
+        alert('Không tìm thấy thông tin')
+      })
+    },
+    showTutorFee(e) {
+      this.resetView()
+      let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+      this.selectedClass = currentRow
+      this.getClassInfo(currentRow.id)
+      if (this.tutorFeeTableConfig === null) {
+        this.initTutorFeeTable()
+        $('#' + this.tutorFeeTableConfig.id).DataTable().draw()
+      } else {
+        $('#' + this.tutorFeeTableConfig.id).DataTable().draw()
+      }
+    }
   },
   mounted() {
     this.initTable()

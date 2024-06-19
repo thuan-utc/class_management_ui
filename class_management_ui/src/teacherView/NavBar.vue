@@ -55,6 +55,15 @@
             </a>
         </li>
 
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Học phí
+        </div>
+
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                 aria-expanded="true" aria-controls="collapsePages">
@@ -63,20 +72,11 @@
             </a>
         </li>
 
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Học sinh
-        </div>
-
-        <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                 aria-expanded="true" aria-controls="collapsePages">
                 <i class="fas fa-fw fa-user-graduate"></i>
-                <router-link to="/all-student" style="color: white;"><span>Quản lý học sinh</span></router-link>
+                <router-link to="/student-not-submitted-fee" style="color: white;"><span>Thanh toán học phí</span></router-link>
             </a>
         </li>
 

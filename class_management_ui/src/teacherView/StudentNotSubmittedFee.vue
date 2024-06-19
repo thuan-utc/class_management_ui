@@ -5,7 +5,7 @@
             <!-- Card Header - Accordion -->
             <a ref="searchLink" href="#searchCriteriaCard" class="d-block card-header py-3 collapsed"
                 data-toggle="collapse" role="button" aria-expanded="false" aria-controls="searchCriteriaCard">
-                <h5 class="m-0 font-weight-bold text-primary">Quản lý học viên</h5>
+                <h5 class="m-0 font-weight-bold text-primary">Bộ lọc</h5>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse" id="searchCriteriaCard" style="">
@@ -65,18 +65,41 @@
         </div>
 
         <div class="card shadow mb-4">
+            <a  class="d-block card-header py-3 collapsed"
+                data-toggle="collapse" role="button" aria-expanded="false" aria-controls="searchCriteriaCard">
+                <h5 class="m-0 font-weight-bold text-primary">Danh sách sinh viên chưa đóng học phí</h5>
+            </a>    
             <div class="card-body">
                 <div class="row"><data-table :config="studentTableConfig"></data-table></div>
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="payConfirmModal" tabindex="-1" aria-labelledby="payConfirmModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    Xác nhận học viên {{ selectedFee != null ? selectedFee.firstName + " " + selectedFee.surname + " " +
+                    selectedFee.lastName : '' }}
+                    thanh toán {{ selectedFee != null ? selectedFee.feeNotSubmitted.toLocaleString('en-US') : '0' }} vnd
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn" @click="payFee">Xác nhận</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        @click="cancelConfirm">Hủy</button>
+                </div>
+            </div>P
+        </div>
+    </div>
+
 </template>
 <script>
 import { search } from '../utils/student-api.js'
+import { getStudentNotSubmittedFee, payFee } from '../utils/tutor-fee-api.js'
 import DataTable from '@/common/DataTable.vue'
 import moment from 'moment'
 export default {
-    name: 'all-student',
+    name: 'student-not-submitted-fee',
     components: {
         DataTable
     },
@@ -90,15 +113,23 @@ export default {
                 phone: '',
                 className: '',
             },
-            studentTableConfig: null
+            studentTableConfig: null,
+            selectedFee: null
         }
     },
     methods: {
         initTable() {
             this.studentTableConfig = {
                 id: 'allStudentTable',
+                events: [
+                    {
+                        event: 'click',
+                        selector: '.btn-confirm-pay',
+                        handler: this.showCofirmPayModal
+                    }
+                ],
                 datatable: {
-                    order: [[3, 'asc']],
+                    order: [[0, 'desc']],
                     searching: false,
                     lengthChange: !1,
                     pageLength: 5,
@@ -113,12 +144,14 @@ export default {
                     },
                     aoColumns: [
                         { mData: 'id', bVisible: false },
+                        { sTitle: 'Năm', mData: 'year' },
+                        { sTitle: 'Tháng', mData: 'month' },
+                        { sTitle: 'Lớp học', mData: 'className' },
                         { sTitle: 'Tên họ', mData: 'firstName' },
                         { sTitle: 'Tên đệm', mData: 'surname' },
                         { sTitle: 'Tên', mData: 'lastName' },
                         { sTitle: 'Email', mData: 'email' },
                         { sTitle: 'Số điện thoại', mData: 'phone' },
-                        { sTitle: 'Lớp học', mData: 'className' },
                         {
                             sTitle: 'Tổng học phí nợ', mData: 'feeNotSubmitted',
                             mRender: function (data, type, full) {
@@ -131,22 +164,22 @@ export default {
                             }
                         },
                         {
-                            sTitle: 'Chi tiết', mData: 'id',
+                            sTitle: 'Xác nhận thanh toán', mData: 'id',
                             mRender: function (data, type, full) {
                                 return `
-                                <button class="btn btn-outline-info btn-sm btn-class-detail">
-                                    <span class="icon text-gray-600"><i class="fas fa-info-circle"></i></span>
+                                <button class="btn btn-outline-success btn-confirm-pay">
+                                    <span class="icon text-gray-600"><i class="fas fa-check-circle"> Xác nhận</i></span>
                                 </button>`
                             }
 
                         }
                     ],
-                    fnServerData: this.getAllStudent
+                    fnServerData: this.getStudentNotSubmittedFee
 
                 }
             }
         },
-        getAllStudent(sSource, aoData, fnCallback) {
+        getStudentNotSubmittedFee(sSource, aoData, fnCallback) {
             let paramMap = {}
             for (let i = 0; i < aoData.length; i++) {
                 paramMap[aoData[i].name] = aoData[i].value
@@ -166,7 +199,7 @@ export default {
             restParams.sort = sort
             restParams = Object.assign(restParams, this.searchCriteria)
             let data = {}
-            search(restParams).then((response) => {
+            getStudentNotSubmittedFee(restParams).then((response) => {
                 data.recordsTotal = response.totalElements
                 data.recordsFiltered = response.totalElements
                 data.data = response.content
@@ -192,6 +225,24 @@ export default {
             }
             this.search()
         },
+        showCofirmPayModal(e) {
+            let currentRow = $(e.target.closest('table')).dataTable().api().row(e.target.closest('tr')).data()
+            this.selectedFee = currentRow
+            $('#payConfirmModal').modal('show')
+        },
+        cancelConfirm() {
+            $('#payConfirmModal').modal('hide')
+        },
+        payFee() {
+            payFee(this.selectedFee.id).then((response) => {
+                this.cancelConfirm()
+                this.search()
+                alert("Thành công")
+            }).catch((error) => {
+                alert("Thất bại")
+                console.log(error)
+            })
+        }
     },
     mounted() {
         this.initTable()

@@ -1220,7 +1220,7 @@ export default {
         $('#add-class-schedule-modal').modal('hide')
       }).catch((error) => {
         console.log(error)
-        alert("Không thành công!")
+        alert("Không thành công: " + error.response.data.error)
         $('#add-class-schedule-modal').modal('hide')
       })
     },
@@ -1296,6 +1296,7 @@ export default {
     },
     addStudent() {
       addStudent(this.selectedClass.id, this.newStudent).then((reponse) => {
+        $('#add-student-modal').modal('hide')
         alert("Thêm thành công!")
         $('#' + this.selectedClass.studentTableConfig.id).DataTable().draw()
       }).catch((error) => {
@@ -1389,7 +1390,7 @@ export default {
         $('#' + this.selectedClass.studentTableConfig.id).DataTable().draw()
       }).catch((error) => {
         console.log(error)
-        alert("Không thể xóa lịch học!")
+        alert("Không thể xóa học sinh!")
       })
     },
     cancelDeleteStudent() {

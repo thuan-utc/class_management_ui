@@ -60,6 +60,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/student-not-submitted-fee',
+      name: 'StudentNotSubmittedFee',
+      component: () => import('../teacherView/StudentNotSubmittedFee.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/class-attendance/:classIdFromParent?',
       name: 'ClassAttendance',
       component: () => import('../teacherView/ClassAttendance.vue'),

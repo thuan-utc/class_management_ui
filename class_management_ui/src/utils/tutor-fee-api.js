@@ -4,10 +4,30 @@ import { saveAs } from 'file-saver'
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}`
 
-export { calculateTutorFee, downloadTutorFeeResult, sendTutorFeeNotification }
+export { calculateTutorFee, downloadTutorFeeResult, sendTutorFeeNotification,
+   searchTutorFee, getTutorFeeDetail, reCalculate, getStudentNotSubmittedFee, payFee,
+   getStudentTutorFee}
+
+function getTutorFeeDetail(params) {
+  const url = `${BASE_URL}/tutor-fee`
+  let paramsNotNull = {}
+  Object.keys(params).forEach((key) => {
+    if (params[key] != null && params[key] !== '') {
+      paramsNotNull[key] = params[key].toString().trim()
+    }
+  })
+
+  return axios.get(
+    url,
+    {
+      headers: { Authorization: `Bearer ${getAccessToken()}` },
+      params: paramsNotNull
+    }
+  ).then(response => response.data)
+}
 
 function calculateTutorFee(params) {
-    const url = `${BASE_URL}/tutor-fee`
+    const url = `${BASE_URL}/tutor-fee/calculate`
     let paramsNotNull = {}
     Object.keys(params).forEach((key) => {
       if (params[key] != null && params[key] !== '') {
@@ -24,23 +44,60 @@ function calculateTutorFee(params) {
     ).then(response => response.data)
   }
 
-// function searchTutorFee(params) {
-//   const url = `${BASE_URL}/tutor-fee/search`
-//   let paramsNotNull = {}
-//   Object.keys(params).forEach((key) => {
-//     if (params[key] != null && params[key] !== '') {
-//       paramsNotNull[key] = params[key].toString().trim()
-//     }
-//   })
+  function reCalculate(params) {
+    const url = `${BASE_URL}/tutor-fee/re-calculate`
+    let paramsNotNull = {}
+    Object.keys(params).forEach((key) => {
+      if (params[key] != null && params[key] !== '') {
+        paramsNotNull[key] = params[key].toString().trim()
+      }
+    })
+  
+    return axios.get(
+      url,
+      {
+        headers: { Authorization: `Bearer ${getAccessToken()}` },
+        params: paramsNotNull
+      }
+    ).then(response => response.data)
+  }
 
-//   return axios.get(
-//     url,
-//     {
-//       headers: { Authorization: `Bearer ${getAccessToken()}` },
-//       params: paramsNotNull
-//     }
-//   ).then(response => response.data)
-// }
+function searchTutorFee(params) {
+  const url = `${BASE_URL}/tutor-fee/search`
+  let paramsNotNull = {}
+  Object.keys(params).forEach((key) => {
+    if (params[key] != null && params[key] !== '') {
+      paramsNotNull[key] = params[key].toString().trim()
+    }
+  })
+
+  return axios.get(
+    url,
+    {
+      headers: { Authorization: `Bearer ${getAccessToken()}` },
+      params: paramsNotNull
+    }
+  ).then(response => response.data)
+}
+
+function getStudentNotSubmittedFee(params) {
+  const url = `${BASE_URL}/tutor-fee/student-not-submitted-tutor-fee`
+  let paramsNotNull = {}
+  Object.keys(params).forEach((key) => {
+    if (params[key] != null && params[key] !== '') {
+      paramsNotNull[key] = params[key].toString().trim()
+    }
+  })
+
+  return axios.get(
+    url,
+    {
+      headers: { Authorization: `Bearer ${getAccessToken()}` },
+      params: paramsNotNull
+    }
+  ).then(response => response.data)
+}
+
 
 
 function downloadTutorFeeResult(classId, month, year, priceclassSessionPrice) {
@@ -82,3 +139,28 @@ function sendTutorFeeNotification(classId, month, year, priceclassSessionPrice) 
     }
   ).then(response => response.data)
 }
+
+
+function payFee(tutorFeeDetailId) {
+  const url = `${BASE_URL}/tutor-fee/pay?tutorFeeDetailId=${tutorFeeDetailId}`;
+
+  return axios.put(
+    url,
+    {},
+    {
+      headers: { Authorization: `Bearer ${getAccessToken()}` }
+    }
+  ).then(response => response.data)
+}
+
+function getStudentTutorFee(classId) {
+  const url = `${BASE_URL}/tutor-fee/fee-for-student?classId=${classId}`;
+
+  return axios.get(
+    url,
+    {
+      headers: { Authorization: `Bearer ${getAccessToken()}` }
+    }
+  ).then(response => response.data)
+}
+
